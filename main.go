@@ -27,17 +27,17 @@ type MapDef struct {
 }
 
 type CaravanDef struct {
-	Name   string
-	Status string
-	X      int
-	Y      int
-	Target int
+	Name       string
+	Status     string
+	X          int
+	Y          int
+	Target     int
 	PrevTarget int
 }
 
 type TownDef struct {
 	Name           string
-	Tier int
+	Tier           int
 	X              int
 	Y              int
 	WarehouseLimit float64
@@ -49,6 +49,12 @@ type FreeCell struct {
 	Y int
 }
 
+type Resources struct {
+	Id int
+	RequiredPerUnit int
+}
+
+
 type TradingGood struct {
 	Id          int
 	Tier        int
@@ -58,6 +64,8 @@ type TradingGood struct {
 	SellingUnit string
 	UnitVolume  float64
 	UnitWeight  float64
+	Resources 	[]Resources
+	Consumables []Resources
 }
 
 type WareGood struct {
@@ -134,7 +142,7 @@ func PrintMap(Map MapDef, Towns []TownDef, Caravan CaravanDef) string {
 					for _, town := range Towns {
 
 						if town.X == posX && town.Y == posY {
-							mapObject = fmt.Sprintf("[%s]%s[%s]" , "red", town.Name[0:1], "white")
+							mapObject = fmt.Sprintf("[%s]%s[%s]", "red", town.Name[0:1], "white")
 						}
 					}
 
@@ -382,7 +390,7 @@ func refresh() {
 				fmt.Fprintf(textMap, "Global step: %d\n", GlobalStep)
 				fmt.Fprintf(textMap, "Map ticker at %s\n", t)
 				fmt.Fprintf(textMap, "Caravan destination: %s\n", Towns[Caravan.Target].Name)
-//				fmt.Fprintf(textLog, "Log ticker at %s\n", t)
+				//				fmt.Fprintf(textLog, "Log ticker at %s\n", t)
 
 				if Caravan.X == Towns[Caravan.Target].X && Caravan.Y == Towns[Caravan.Target].Y {
 
@@ -390,7 +398,6 @@ func refresh() {
 
 					Caravan.PrevTarget = Caravan.Target
 
-			
 					for {
 						Caravan.Target = RndRange(0, len(Towns)-1)
 						if Caravan.Target != Caravan.PrevTarget {
@@ -400,9 +407,9 @@ func refresh() {
 
 					//fmt.Fprintf(textLog, "destination: %s\n", Towns[Caravan.Target].Name)
 				}
-				
+
 				tX, tY := FindBestNextPoint(Caravan.X, Caravan.Y, Towns[Caravan.Target].X, Towns[Caravan.Target].Y)
-				
+
 				Caravan.X = tX
 				Caravan.Y = tY
 
@@ -433,11 +440,38 @@ func init() {
 	*/
 
 	Goods = []TradingGood{
-		{Id: 0, Tier: 0, Name: "Шаблон товара", PriceMin: 0, PriceMax: 0, SellingUnit: "ед.", UnitVolume: 0.0, UnitWeight: 0.0},
+		{Id: 0, Tier: 0, Name: "Шаблон", PriceMin: 1, PriceMax: 1, SellingUnit: "ед.", UnitVolume: 1.0, UnitWeight: 1.0},
 		{Id: 1, Tier: 1, Name: "Зерно", PriceMin: 2, PriceMax: 10, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050},
 		{Id: 2, Tier: 1, Name: "Дерево", PriceMin: 5, PriceMax: 20, SellingUnit: "кубометр", UnitVolume: 1.0, UnitWeight: 0.640},
 		{Id: 3, Tier: 1, Name: "Камень", PriceMin: 4, PriceMax: 18, SellingUnit: "кубометр", UnitVolume: 1.0, UnitWeight: 1.7},
 		{Id: 4, Tier: 1, Name: "Руда", PriceMin: 9, PriceMax: 30, SellingUnit: "тонна", UnitVolume: 0.5, UnitWeight: 1.0},
+		
+		{Id: 5, Tier: 2, Name: "Мука", PriceMin: 40, PriceMax: 75, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050, 
+			Resources: []Resources{
+				Resources{Id: 1, RequiredPerUnit: 8},
+			},
+		},
+		{Id: 6, Tier: 2, Name: "Доски", PriceMin: 50, PriceMax: 100, SellingUnit: "кубометр", UnitVolume: 0.0, UnitWeight: 0.0, 
+			Resources: []Resources{
+				Resources{Id: 2, RequiredPerUnit: 8},
+			},
+		},
+		{Id: 7, Tier: 2, Name: "Каменная заготовка", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0, 
+			Resources: []Resources{
+				Resources{Id: 3, RequiredPerUnit: 8},
+			},
+		},
+		{Id: 8, Tier: 2, Name: "Металлические инструменты", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0, 
+			Resources: []Resources{
+				Resources{Id: 4, RequiredPerUnit: 8},
+			},
+		},
+		{Id: 9, Tier: 3, Name: "Деревянная мебель", PriceMin: 100, PriceMax: 200, SellingUnit: "", UnitVolume: 0.0, UnitWeight: 0.0, 
+			Resources: []Resources{
+				Resources{Id: 2, RequiredPerUnit: 4},
+				Resources{Id: 6, RequiredPerUnit: 8},
+			},
+		},
 	}
 }
 
@@ -448,6 +482,15 @@ func main() {
 		MinDistance   int
 		MaxTownsCount int
 	)
+
+	for _, Good := range Goods {
+		fmt.Printf("%s[%d] цена: %.1f/%.1f\n", Good.Name, Good.Tier, Good.PriceMin, Good.PriceMax)
+		for _, Resource := range Good.Resources {
+			fmt.Printf("  %s[%d]: %d\n", Goods[Resource.Id].Name, Goods[Resource.Id].Tier, Resource.RequiredPerUnit)
+		}
+	}
+
+	os.Exit(0)
 
 	app = tview.NewApplication()
 
@@ -475,18 +518,16 @@ func main() {
 		SetTitleAlign(tview.AlignLeft).
 		SetTitle("Log")
 
-
 	textTown = tview.NewTextView().
 		SetScrollable(true).
 		SetWrap(true).
 		SetWordWrap(true).
 		SetText("Loading...")
-	
+
 	textTown.
 		SetBorder(true).
 		SetTitleAlign(tview.AlignLeft).
 		SetTitle("Towns")
-
 
 	textCaravan = tview.NewTextView().
 		SetScrollable(true).
@@ -505,10 +546,10 @@ func main() {
 		SetMinSize(15, 20).
 		SetBorders(false)
 
-	grid.AddItem(textMap, 	0, 0, 1, 2, 0, 0, false).
-		AddItem(textLog, 			0, 2, 2, 1, 0, 0, false).
-		AddItem(textTown,			1, 0, 1, 1, 0, 0, false).
-		AddItem(textCaravan,	1, 1, 1, 1, 0, 0, false)
+	grid.AddItem(textMap, 0, 0, 1, 2, 0, 0, false).
+		AddItem(textLog, 0, 2, 2, 1, 0, 0, false).
+		AddItem(textTown, 1, 0, 1, 1, 0, 0, false).
+		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false)
 
 	//os.Exit(0)
 
@@ -517,8 +558,6 @@ func main() {
 	Size = 15
 	MinDistance = 5
 	MaxTownsCount = 26
-
-
 
 	GlobalMap = MapDef{Width: Size, Height: Size * 4}
 
@@ -553,57 +592,57 @@ func main() {
 
 	//os.Exit(0)
 
-/*	step := 0
-	prev := -1
+	/*	step := 0
+		prev := -1
 
-	fmt.Sprintf("Start at %d:%d\n", Caravan.X, Caravan.Y)
-	fmt.Printf("First destination \"%s\" at %d:%d\n", Towns[target].Name, Towns[target].X, Towns[target].Y)
+		fmt.Sprintf("Start at %d:%d\n", Caravan.X, Caravan.Y)
+		fmt.Printf("First destination \"%s\" at %d:%d\n", Towns[target].Name, Towns[target].X, Towns[target].Y)
 
-	for {
+		for {
 
-		fmt.Print("\033[H\033[2J")
+			fmt.Print("\033[H\033[2J")
 
-		pMap := PrintMap(GlobalMap, Towns, Caravan)
-		fmt.Printf("%s", pMap)
+			pMap := PrintMap(GlobalMap, Towns, Caravan)
+			fmt.Printf("%s", pMap)
 
-		for _, town := range Towns {
-			fmt.Printf("%+v\n", town)
-			for _, ware := range town.Wares {
-				Price := Goods[ware.Id].PriceMin + (Goods[ware.Id].PriceMax-Goods[ware.Id].PriceMin)*(1.0-ware.Quantity/town.WarehouseLimit)
-				Price = math.Round(Price)
-				fmt.Printf("  %s: %.0f/%.0f Цена: %.0f\n", Goods[ware.Id].Name, ware.Quantity, town.WarehouseLimit, Price)
-			}
-			fmt.Printf("\n")
-		}
-		fmt.Printf("Count: %d\n", len(Towns[Caravan.Target].Nameu)
-
-		log.Printf("Destination \"%s\" at %d:%d\n", Towns[target].Name, Towns[target].X, Towns[target].Y)
-		log.Printf("Step %d, pos %d:%d\n", step, Caravan.X, Caravan.Y)
-
-		if Caravan.X == Towns[target].X && Caravan.Y == Towns[target].Y {
-
-			log.Printf("Arrived at destination %d:%d\n", Caravan.X, Caravan.Y)
-
-			prev = target
-			
-			for {
-				target = RndRange(0, len(Towns)-1)
-				if target != prev {
-					break
+			for _, town := range Towns {
+				fmt.Printf("%+v\n", town)
+				for _, ware := range town.Wares {
+					Price := Goods[ware.Id].PriceMin + (Goods[ware.Id].PriceMax-Goods[ware.Id].PriceMin)*(1.0-ware.Quantity/town.WarehouseLimit)
+					Price = math.Round(Price)
+					fmt.Printf("  %s: %.0f/%.0f Цена: %.0f\n", Goods[ware.Id].Name, ware.Quantity, town.WarehouseLimit, Price)
 				}
+				fmt.Printf("\n")
 			}
+			fmt.Printf("Count: %d\n", len(Towns[Caravan.Target].Nameu)
 
-		}
-		tX, tY := FindBestNextPoint(Caravan.X, Caravan.Y, Towns[target].X, Towns[target].Y)
-		Caravan.X = tX
-		Caravan.Y = tY
+			log.Printf("Destination \"%s\" at %d:%d\n", Towns[target].Name, Towns[target].X, Towns[target].Y)
+			log.Printf("Step %d, pos %d:%d\n", step, Caravan.X, Caravan.Y)
 
-		//MoveToPoint(&caravan, towns[target].X, towns[target].Y)
+			if Caravan.X == Towns[target].X && Caravan.Y == Towns[target].Y {
 
-		step++
+				log.Printf("Arrived at destination %d:%d\n", Caravan.X, Caravan.Y)
 
-		time.Sleep(1000 * time.Millisecond)
-	}*/
+				prev = target
+
+				for {
+					target = RndRange(0, len(Towns)-1)
+					if target != prev {
+						break
+					}
+				}
+
+			}
+			tX, tY := FindBestNextPoint(Caravan.X, Caravan.Y, Towns[target].X, Towns[target].Y)
+			Caravan.X = tX
+			Caravan.Y = tY
+
+			//MoveToPoint(&caravan, towns[target].X, towns[target].Y)
+
+			step++
+
+			time.Sleep(1000 * time.Millisecond)
+		}*/
 
 }
 
