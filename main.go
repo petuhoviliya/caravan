@@ -14,7 +14,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-const refreshInterval = 1000 * time.Millisecond
+const refreshInterval = 750 * time.Millisecond
 
 type PositionDef struct {
 	X int
@@ -94,6 +94,7 @@ func PrintMap(Map MapDef, Towns []TownDef, Caravan CaravanDef) string {
 	// @ - caravan
 
 	var PrintableMap string
+	var ColorTag string
 
 	for posX := 0; posX <= Map.Width+1; posX++ {
 
@@ -142,7 +143,21 @@ func PrintMap(Map MapDef, Towns []TownDef, Caravan CaravanDef) string {
 					for _, town := range Towns {
 
 						if town.X == posX && town.Y == posY {
-							mapObject = fmt.Sprintf("[%s]%s[%s]", "red", town.Name[0:1], "white")
+
+							ColorTag = "red"
+
+							switch Tier := town.Tier; Tier {
+								case 1:
+									ColorTag = "red"
+								case 2:
+									ColorTag = "orange"
+								case 3:
+									ColorTag = "green"
+								default:
+									ColorTag = "red"
+							}
+
+							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:1], "white")
 						}
 					}
 
@@ -197,10 +212,17 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 
 	var Towns []TownDef
 	var Wares []WareGood
+	var MaxTier2 int
+	var MaxTier3 int
+	var Tier2 int = 1
+	var Tier3 int = 1
 
 	if TownCount > 26 {
 		TownCount = 26
 	}
+
+	MaxTier2 = RndRange(2,4)
+	MaxTier3 = RndRange(1,2)
 
 	alphabet := [26]string{"Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"}
 
@@ -220,16 +242,40 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 
 		Wares = nil
 
-		for i, Good := range Goods {
-			if i == 0 {
+		for j, Good := range Goods {
+			if j == 0 {
 				continue
 			}
 			Wares = append(Wares, WareGood{Id: Good.Id, Quantity: float64(Rnd(500))})
 
 		}
 
-		Towns = append(Towns, TownDef{Name: alphabet[i], X: FreeCells[NextFreeCell].X, Y: FreeCells[NextFreeCell].Y, WarehouseLimit: 500.0, Wares: Wares})
+		Towns = append(Towns, TownDef{Name: alphabet[i], Tier: 1, X: FreeCells[NextFreeCell].X, Y: FreeCells[NextFreeCell].Y, WarehouseLimit: 500.0, Wares: Wares})
+
 	}
+
+	for {
+		if Tier2 > MaxTier2 { break }
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier2++
+			Towns[t].Tier = 2
+		}
+	}
+
+	for {
+		if Tier3 > MaxTier3 { break }
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier3++
+			Towns[t].Tier = 3
+		}
+	}
+
+	for _, t := range Towns {
+		fmt.Printf("%s %d\n", t.Name, t.Tier)
+	}
+
 	return Towns
 }
 
@@ -471,6 +517,9 @@ func init() {
 				Resources{Id: 2, RequiredPerUnit: 4},
 				Resources{Id: 6, RequiredPerUnit: 8},
 			},
+			Consumables: []Resources{
+				Resources{Id: 8, RequiredPerUnit: 1},
+			},
 		},
 	}
 }
@@ -488,9 +537,10 @@ func main() {
 		for _, Resource := range Good.Resources {
 			fmt.Printf("  %s[%d]: %d\n", Goods[Resource.Id].Name, Goods[Resource.Id].Tier, Resource.RequiredPerUnit)
 		}
+		for _, Consumable := range Good.Consumables {
+			fmt.Printf("  * %s[%d]: %d\n", Goods[Consumable.Id].Name, Goods[Consumable.Id].Tier, Consumable.RequiredPerUnit)
+		}
 	}
-
-	os.Exit(0)
 
 	app = tview.NewApplication()
 
@@ -511,7 +561,7 @@ func main() {
 		SetWrap(true).
 		SetWordWrap(true).
 		SetMaxLines(100).
-		SetText("Loading...")
+		SetText("Loading...\n")
 
 	textLog.
 		SetBorder(true).
@@ -533,7 +583,7 @@ func main() {
 		SetScrollable(true).
 		SetWrap(true).
 		SetWordWrap(true).
-		SetText("Loading...\n")
+		SetText("Loading...")
 
 	textCaravan.
 		SetBorder(true).
@@ -556,10 +606,10 @@ func main() {
 	//SetupCloseHandler()
 
 	Size = 15
-	MinDistance = 5
+	MinDistance = 6
 	MaxTownsCount = 26
 
-	GlobalMap = MapDef{Width: Size, Height: Size * 4}
+	GlobalMap = MapDef{Width: Size, Height: Size * 5}
 
 	bitMap := MakeBitMap(GlobalMap.Width, GlobalMap.Height)
 
