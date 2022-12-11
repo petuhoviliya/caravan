@@ -1,0 +1,94 @@
+{
+  "year": {
+    "days": 60,
+    "perSeason": 15
+  },
+  "seasons": {
+    "winter": {
+      "moveCostMod": 1.10
+    },
+    "spring": {
+      "moveCostMod": 1.07
+    },
+    "summer": {
+      "moveCostMod": 1.00
+    },
+    "autumn": {
+      "moveCostMod": 1.03
+    }
+  },
+  "weather": {
+    "clear": {
+      "moveCostMod": 1.00,
+      "chance": {
+        "winter": 0.40,
+        "spring": 0.60,
+        "summer": 0.50,
+        "autumn": 0.40
+      }
+    },
+    "heat": {
+      "moveCostMod": 1.20,
+      "chance": {
+        "winter": 0.00,
+        "spring": 0.00,
+        "summer": 0.30,
+        "autumn": 0.0
+      }
+    },
+    "fog": {
+      "moveCostMod": 1.03,
+      "chance": {
+        "winter": 0.00,
+        "spring": 0.05,
+        "summer": 0.05,
+        "autumn": 0.10
+      }
+    },
+    "rain": {
+      "moveCostMod": 1.07,
+      "chance": {
+        "winter": 0.00,
+        "spring": 0.20,
+        "summer": 0.10,
+        "autumn": 0.30
+      }
+    },
+    "rainfall": {
+      "moveCostMod": 1.12,
+      "chance": {
+        "winter": 0.00,
+        "spring": 0.10,
+        "summer": 0.05,
+        "autumn": 0.15
+      }
+    },
+    "snow": {
+      "moveCostMod": 1.09,
+      "chance": {
+        "winter": 0.30,
+        "spring": 0.05,
+        "summer": 0.00,
+        "autumn": 0.05
+      }
+    },
+    "blizzard": {
+      "moveCostMod": 1.15,
+      "chance": {
+        "winter": 0.20,
+        "spring": 0.00,
+        "summer": 0.00,
+        "autumn": 0.00
+      }
+    },
+    "frost": {
+      "moveCostMod": 1.25,
+      "chance": {
+        "winter": 0.10,
+        "spring": 0.00,
+        "summer": 0.00,
+        "autumn": 0.00
+      }
+    }
+  }
+}

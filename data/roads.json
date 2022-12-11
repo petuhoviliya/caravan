@@ -1,0 +1,22 @@
+[
+	{
+		"id":"good",
+		"mod":1.02
+	},
+	{
+		"id":"bad",
+		"mod":1.26
+	},
+	{
+		"id":"offroad",
+		"mod":1.51
+	},
+	{
+		"id":"bridge",
+		"mod":1.0
+	},
+	{
+		"id":"offbridge",
+		"mod":1.5
+	}
+]

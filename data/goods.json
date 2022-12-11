@@ -1,0 +1,95 @@
+[
+  {
+    "id": 1,
+    "tier": 1,
+    "name": "Зерно",
+    "priceMin": 2,
+    "priceMax": 10,
+    "sellingunit": "мешок",
+    "unitVolume": 0.036,
+    "unitWeight": 0.050,
+    "resources": []
+  },
+  {
+    "id": 2,
+    "tier": 1,
+    "name": "Дерево",
+    "priceMin": 5,
+    "priceMax": 20,
+    "sellingunit": "кубометр",
+    "unitVolume": 1.0,
+    "unitWeight": 0.640,
+    "resources": []
+  },
+  {
+    "id": 3,
+    "tier": 1,
+    "name": "Камень",
+    "priceMin": 4,
+    "priceMax": 18,
+    "sellingunit": "кубометр",
+    "unitVolume": 1.0,
+    "unitWeight": 1.7,
+    "resources": []
+  },
+  {
+    "id": 4,
+    "tier": 1,
+    "name": "Руда",
+    "priceMin": 9,
+    "priceMax": 30,
+    "sellingunit": "тонна",
+    "unitVolume": 0.5,
+    "unitWeight": 1.0,
+    "resources": []
+  },
+  {
+    "id": 5,
+    "tier": 2,
+    "name": "Мука",
+    "priceMin": 40,
+    "priceMax": 75,
+    "sellingunit": "мешок",
+    "unitVolume": 0.036,
+    "unitWeight": 0.050,
+    "resources": [
+      {
+        "id": 1,
+        "requiredPerunit": 8
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "tier": 2,
+    "name": "Доски",
+    "priceMin": 15,
+    "priceMax": 30,
+    "sellingunit": "кубометр",
+    "unitVolume": 0.036,
+    "unitWeight": 0.050,
+    "resources": [
+      {
+        "id": 2,
+        "requiredPerunit": 10
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "tier": 2,
+    "name": "Металл",
+    "priceMin": 40,
+    "priceMax": 50,
+    "sellingunit": "кубометр",
+    "unitVolume": 0.036,
+    "unitWeight": 0.050,
+    "resources": [
+      {
+        "id": 3,
+        "requiredPerunit": 20
+      }
+    ]
+  }
+]
+

@@ -1,0 +1,137 @@
+{
+  "relief": {
+    "id": 0,
+    "subtypes": [
+      {
+        "id": "desert",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "steppe",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "plain",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "forest",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "mountain",
+        "passable": true,
+        "passableCondition": [
+          "road-only"
+        ]
+      }
+    ]
+  },
+  "water": {
+    "id": 1,
+    "subtypes": [
+      {
+        "id": "river",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "lake",
+        "passable": true,
+        "passableCondition": [
+          "bridge-only"
+        ]
+      },
+      {
+        "id": "sea",
+        "passable": false,
+        "passableCondition": [
+          "none"
+        ]
+      }
+    ]
+  },
+  "roads": {
+    "id": 2,
+    "subtypes": [
+      {
+        "id": "good",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "bad",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "bridge",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      }
+    ]
+  },
+  "towns": {
+    "id": 3,
+    "subtypes": [
+      {
+        "id": "town",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      }
+    ]
+  },
+  "poi": {
+    "id": 4,
+    "subtypes": [
+      {
+        "id": "poi",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      }
+    ]
+  },
+  "creatures": {
+    "id": 5,
+    "subtypes": [
+      {
+        "id": "neutral",
+        "passable": true,
+        "passableCondition": [
+          "none"
+        ]
+      },
+      {
+        "id": "hostile",
+        "passable": true,
+        "passableCondition": [
+          "fight-only"
+        ]
+      }
+    ]
+  }
+}

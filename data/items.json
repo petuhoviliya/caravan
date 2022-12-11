@@ -1,0 +1,412 @@
+{
+  "grades":[
+    "Всего 5 "
+  ],
+  "quality": [
+    {
+      "id": 1,
+      "name": "Сломанное",
+      "description": "Почти разваливается.",
+      "bonus": 0.50,
+      "special": []
+    },
+    {
+      "id": 2,
+      "name": "Плохое",
+      "description": "Сделано учеником.",
+      "bonus": 0.80,
+      "special": []
+    },
+    {
+      "id": 3,
+      "name": "Обычное",
+      "description": "Пример приемлемого качества изготовления.",
+      "bonus": 1.00,
+      "special": []
+    },
+    {
+      "id": 4,
+      "name": "Хорошее",
+      "description": "Мастер дорожит своей репутацией, поэтому его изделия имеют хорошее качество.",
+      "bonus": 1.10,
+      "special": []
+    },
+    {
+      "id": 5,
+      "name": "Качественное",
+      "description": "Изготовлено опытным мастером, любящим свое дело.",
+      "bonus": 1.20,
+      "special": []
+    },
+    {
+      "id": 6,
+      "name": "Превосходное",
+      "description": "Этот предмет был создан искуснейшим мастером своего времени.",
+      "bonus": 1.40,
+      "special": []
+    }
+  ],
+  "class":{
+    "weapons": {
+      "types":[
+        {
+          "id":"ближний",
+          "subtypes":[
+            "меч",
+            "топор",
+            "дубина",
+            "булава",
+            "кинжал",
+            "древковое",
+            "посох"
+          ]
+        },
+        {
+          "id":"дальний",
+          "subtypes":[
+            "лук",
+            "арбалет",
+            "праща"
+          ]
+        },
+        {
+          "id":"щиты",
+          "subtypes":[
+            "щиты"
+          ]
+        }
+      ]
+    },
+    "armour": {
+      "types": [
+        "полный",
+        "неполный",
+        "нагрудник"
+      ],
+      "subtypes": [
+        "ткань",
+        "кожа",
+        "кольчуга",
+        "латы"
+      ]
+    },
+    "ammunition": {
+      "types": [
+        "стрела",
+        "болт",
+        "пуля"
+      ]
+    },
+    "aid": {
+      "types": [
+        "бинт"
+      ]
+    },
+    "food": {
+      "type": [
+        "сырое",
+        "приготовленное"
+      ],
+      "subtypes": [
+        "мясо",
+        "рыба",
+        "овощи",
+        "фрукты",
+        "грибы",
+        "зерно",
+        "сыр"
+      ]
+    },
+    "drink": {
+      "type": [
+        "вода",
+        "молоко",
+        "варево",
+        "алкоголь"
+      ],
+      "subtypes": [
+        "грязная вода",
+        "чистая вода",
+        "кипяченая вода",
+        "козье молоко",
+        "коровье молоко",
+        "овечье молоко",
+        "чай",
+        "самогон",
+        "вино",
+        "пиво"
+      ]
+    }
+  },
+  "effects": [
+    {
+      "id": 1,
+      "type": "effect",
+      "subtype": "battle",
+      "rank": 1,
+      "name": "Кровотечение",
+      "description": "Медленная потеря крови."
+    },
+    {
+      "id": 2,
+      "type": "effect",
+      "subtype": "battle",
+      "rank": 1,
+      "name": "Ошеломление",
+      "description": "Временная дезориентация."
+    },
+    {
+      "id": 3,
+      "type": "effect",
+      "subtype": "battle",
+      "rank": 1,
+      "name": "Оглушение",
+      "description": "Потеря сознания на короткий срок."
+    }
+  ],
+  "templates": {
+    "weapon": [
+      {
+        "id": 1,
+        "type": "ближний",
+        "subtype": "дубина",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Дубина",
+        "description": "Немного обработанная толстая ветка от ближайщего дерева. Сложно назвать это оружием, но иногда даже это лучше чем просто кулаки.",
+        "attack": 3,
+        "damage": 1,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 2,
+        "type": "ближний",
+        "subtype": "меч",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Простой меч",
+        "description": "Простой железный меч.",
+        "attack": 5,
+        "damage": 2,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 3,
+        "type": "ближний",
+        "subtype": "топор",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Топор",
+        "description": "Лучше всего подходит для рубки дров, чем для битвы.",
+        "attack": 2,
+        "damage": 3,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 4,
+        "type": "ближний",
+        "subtype": "булава",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Булава",
+        "description": "От обычной дубины её отличает более качественная обработка, да наличие железных вставок на навершии.",
+        "attack": 5,
+        "damage": 2,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [
+          {
+            "id": 2,
+            "chance": 0.05
+          }
+        ],
+        "specials": []
+      },
+      {
+        "id": 5,
+        "type": "ближний",
+        "subtype": "кинжал",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Большой нож",
+        "description": "Это точно оружие? Уместнее он смотрелся бы на кухне.",
+        "attack": 5,
+        "damage": 1,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 6,
+        "type": "ближний",
+        "subtype": "древковое",
+        "one-hand": false,
+        "grade": 1,
+        "quality": 3,
+        "name": "Заточенная палка",
+        "description": "Вроде бы копье, но это не точно.",
+        "attack": 2,
+        "damage": 3,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 7,
+        "type": "дальний",
+        "subtype": "лук",
+        "one-hand": false,
+        "grade": 1,
+        "quality": 3,
+        "name": "Охотничий лук",
+        "description": "Самый простой лук из возможных.",
+        "attack": 2,
+        "damage": 3,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 8,
+        "type": "дальний",
+        "subtype": "арбалет",
+        "one-hand": false,
+        "grade": 1,
+        "quality": 3,
+        "name": "Арбалет",
+        "description": "Стреляет и ладно.",
+        "attack": 2,
+        "damage": 3,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 9,
+        "type": "ближний",
+        "subtype": "праща",
+        "one-hand": false,
+        "grade": 1,
+        "quality": 3,
+        "name": "Праща",
+        "description": "Простейщее метательное оружие, собранное буквально из того, что валялось под ногами.",
+        "attack": 0,
+        "damage": 2,
+        "armor": 0,
+        "defense": 0,
+        "recovery": 0,
+        "effects": [],
+        "specials": []
+      },
+      {
+        "id": 10,
+        "type": "щиты",
+        "subtype": "щит",
+        "one-hand": true,
+        "grade": 1,
+        "quality": 3,
+        "name": "Щит",
+        "description": "Деревянный щит, сколоченный из старых досок.",
+        "attack": 0,
+        "damage": 0,
+        "armor": 2,
+        "defense": 0,
+        "recovery": 1.2,
+        "effects": [],
+        "specials": []
+      }
+    ],
+    "armour": [
+      {
+        "id": 1,
+        "type": "ткань",
+        "subtype": "нагрудник",
+        "grade": 1,
+        "quality": 3,
+        "name": "Рубашка",
+        "description": "Рубашка из дешевой и грубой ткани",
+        "attack": 0,
+        "damage": 0,
+        "armor": 0,
+        "defense": 1,
+        "recovery": 1.0,
+        "effects": [],
+        "special": []
+      },
+      {
+        "id": 2,
+        "type": "кожа",
+        "subtype": "нагрудник",
+        "grade": 1,
+        "quality": 3,
+        "name": "Кожанный жилет",
+        "description": "Простой кожанный жилет, лучше чем ничего.",
+        "attack": 0,
+        "damage": 0,
+        "armor": 1,
+        "defense": 2,
+        "recovery": 1.1,
+        "effects": [],
+        "special": []
+      },
+      {
+        "id": 3,
+        "type": "кольчуга",
+        "subtype": "нагрудник",
+        "grade": 1,
+        "quality": 3,
+        "name": "Кольчуга",
+        "description": "Судя по внешнему виду эта кольчуга была откопана на поле боя и слегка почищена. Защитные качества соответствуют внешнему виду.",
+        "attack": 0,
+        "damage": 0,
+        "armor": 2,
+        "defense": 3,
+        "recovery": 1.3,
+        "effects": [],
+        "special": []
+      },
+      {
+        "id": 4,
+        "type": "латы",
+        "subtype": "нагрудник",
+        "grade": 1,
+        "quality": 3,
+        "name": "Кираса",
+        "description": "По странному стечению обстоятельств эта кираса избежала переплавки и попала к ученику кузнеца для отработки навыков ремонта.",
+        "attack": 0,
+        "damage": 0,
+        "armor": 3,
+        "defense": 5,
+        "recovery": 1.5,
+        "effects": [],
+        "special": []
+      }
+    ]
+  }
+}

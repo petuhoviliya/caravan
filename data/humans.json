@@ -1,0 +1,18 @@
+{
+  "types":[
+    "outlaw","guards","army","militia","peasant"
+  ],
+  "ranks":[
+    "новичок","обученный","ветеран","главарь"
+  ],
+  "templates":[
+    {
+      "id":"rogue",
+      "name":"Разбойник",
+      "description":"",
+      "grade":1,
+      "stats":{},
+      "loot":[]
+    }
+  ]
+}

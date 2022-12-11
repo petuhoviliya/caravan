@@ -1,0 +1,218 @@
+{
+  "rank":[
+    {
+      "id":"newbie",
+      "name":"Новичок",
+      "description":"У вас есть базовые познания в этом умении.",
+      "max":99
+    },
+    {
+      "id":"trained",
+      "name":"Обученный",
+      "description":"Ваш учитель научил вас всему, что знал сам.",
+      "max": 6
+    },
+    {
+      "id":"skilled",
+      "name":"Опытный",
+      "description":"Годы тренировок и практики не пропали зря.",
+      "max": 4
+    },
+    {
+      "id":"master",
+      "name":"Мастер",
+      "description":"Кто-то говорит про талант, но вы лучше всех знаете чего стоит достигнуть такого уровня мастерства.",
+      "max": 2
+    }
+  ],
+	"bonuses":{
+		"type":[
+			"attributes":["str","agi","int","cha"],
+			"skills":["hand-to-hand","melee","ranged","shields","unarmored","cloth","leather","chain","plate"],
+			"stats":["attack","damage","armor","defense"]
+		]
+	},
+  "weapon":[
+		{
+			"id": "hand-to-hand",
+      "name": "Безоружный бой",
+      "description": "",
+      "maxRank": 4,
+			"bonusesByRank":{
+				"comment":"Бонусы объединяются",
+				"newbie":[],
+				"trained":[],
+				"skilled":[],
+				"master":[
+					{
+						"type":"item",
+						"parameter":"can-be-used",
+						"item-type":"melee",
+						"item-subtype":"staff"
+					}
+				]
+			}
+
+		},
+    {
+      "id":"melee",
+      "name": "Ближний бой",
+      "description": "Навык использования оружия ближнего боя.",
+      "maxRank": 4,
+			"affects":[
+				{
+					"type":"items",
+					"item-class":"weapon",
+					"item-type":"melee",
+					"item-subtype":"any"
+				}
+			],
+			"bonusesByRank":{
+				"comment":"Бонусы объединяются",
+				"newbie":[
+					{
+						"type":"stats",
+						"parameter":"attack",
+						"action":"mod",
+						"value":2
+					}
+				],
+				"trained":[
+					{
+						"type":"stats",
+						"parameter":"damage",
+						"action":"mod",
+						"value":3
+					}
+				],
+				"skilled":{},
+				"master":{}
+			}
+    },
+    {
+      "id":"ranged",
+      "name": "Дальний бой",
+      "description": "Навык использования оружия дальнего боя.",
+      "maxRank": 4
+    },
+    {
+      "id":"shields",
+      "name": "Щиты",
+      "description": "Навык обращения со щитами.",
+      "maxRank": 4
+    }
+  ],
+  "armour":[
+    {
+      "id":"cloth",
+      "name": "Одежда",
+      "description": "",
+      "maxRank": 1
+    },
+    {
+      "id":"leather",
+      "name": "Кожа",
+      "description": "",
+      "maxRank": 4
+    },
+    {
+      "id":"chain",
+      "name": "Кольчуга",
+      "description": "",
+      "maxRank": 4
+    },
+    {
+      "id":"plate",
+      "name": "Латы",
+      "description": "",
+      "maxRank": 4
+    }
+  ],
+  "logistic":[
+		{
+			"id":"logistic",
+			"name":"Логистика",
+			"description":"Выстраивание оптимального маршрута для максимизации прибыли.",
+      "maxRank": 4
+		},
+		{
+			"id":"pathfinding",
+			"name":"Поиск пути",
+			"description":"Поиск оптимального пути для минимизации расходов на перемещение.",
+      "maxRank": 4
+		}
+	],
+  "trade":[
+		{
+			"id":"trade",
+			"name":"Торговля",
+			"description":"Умение купить подешевле и продать подороже.",
+      "maxRank": 4
+		},
+		{
+			"id":"appraiser",
+			"name":"Оценщик",
+			"description":"Через ващи руки прошло столько товара, что вы способны почти на ощупь оценить его качество и ценность.",
+			"effect":"Оценка качества найденных предметов. Распознать подделку при покупке.",
+      "maxRank": 4
+		}
+	],
+	"medicine":[
+		{
+			"id":"firstaid",
+			"name":"Первая помощь",
+			"description":"Первая помощь раненным в битве, увеличивает шансы выживания людей после битв.",
+      "maxRank": 4
+		},
+		{
+			"id":"healer",
+			"name":"Лекарь",
+			"description":"Увеличивает скорость выздоровления после травм и болезней.",
+      "maxRank": 4
+		}
+	],
+	"battle":[
+		{
+			"id":"tactics",
+			"name":"Тактик",
+			"description":"",
+      "maxRank": 4
+		},
+		{
+			"id":"leadership",
+			"name":"Лидерство",
+			"description":"",
+      "maxRank": 4
+		}
+	],
+	"common":[
+		{
+			"id":"rumors",
+			"name":"Слышащий",
+			"description":"Вы умеете слушать и слышать. Порой из сплетен и слухов можно выудить ценнейшую информацию.",
+      "maxRank": 4
+		},
+		{
+			"id":"observation",
+			"name":"Наблюдательность",
+			"description":"",
+			"effect":"Избегание нежелательных встреч. Случайные находки.",
+      "maxRank": 4
+		},
+		{
+			"id":"stableman",
+			"name":"Конюх",
+			"description":"",
+			"effect":"",
+      "maxRank": 4
+		},
+		{
+			"id":"quartermaster",
+			"name":"Квартирмейстер",
+			"description":"",
+			"effect":"",
+      "maxRank": 4
+		}
+	]
+
+}
