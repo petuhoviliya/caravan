@@ -10,11 +10,19 @@ import (
 	"syscall"
 	"time"
 	//"github.com/jroimartin/gocui"
-	//"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-const refreshInterval = 750 * time.Millisecond
+const refreshInterval = 1000 * time.Millisecond
+
+// Status:
+//
+//	At point
+//	Moving
+const CaravanStatusMoving uint8 = 1
+const CaravanStatusInTown uint8 = 2
+const CaravanStatusStarting uint8 = 255
 
 type PositionDef struct {
 	X int
@@ -26,63 +34,66 @@ type MapDef struct {
 	Height int
 }
 
-
 type Cargo struct {
-	TradingGoodId int
+	WareId   int
+	TownId   int
 	Quantity float64
 	BuyPrice float64
 }
 
 type TradeConfig struct {
-	
+
 	// Максимальная цена покупки товара
-	// в процентах 
-	// TradingGood.PriceMin - 0%  
+	// в процентах
+	// TradingGood.PriceMin - 0%
 	// TradingGood.PriceMax - 100%
-	BuyMaxPrice int
-	
+	BuyMaxPrice float64
+
 	// Всегда покупать максимально возможное количество до полной емкости
 	BuyFullCapacity bool
 
 	// Максимальное кол-во покупки товара
 	// в процентах от CaravanTemplate.CapacityMax
 	// Значение игнорируется, если BuyFullCapacity == true
-	BuyMaxAmount int
+	BuyMaxAmount float64
 
+	// Минимальное кол-во к покупке
+	// в процентах от CaravanTemplate.CapacityMax
+	BuyMinAmount float64
 
 	// Всегда продавать с прибылью
 	// Цена продажи не может быть ниже цены покупки
 	SellWithProfit bool
 
 	// Минимальная цена продажи товара
-	// в процентах 
-	// TradingGood.PriceMin - 0%  
+	// в процентах
+	// TradingGood.PriceMin - 0%
 	// TradingGood.PriceMax - 100%
-	SellMinPrice int
-
+	SellMinPrice float64
 }
 
 type CaravanTemplate struct {
-	Name       string
-	Status     string
-	X          int
-	Y          int
-	Target     int
-	PrevTarget int
-	Capacity float64
+	Name        string
+	Status      uint8
+	Money       float64
+	X           int
+	Y           int
+	Target      int
+	PrevTarget  int
 	CapacityMax float64
-	Cargo []Cargo
+	Cargo       []Cargo
 	TradeConfig TradeConfig
 }
 
 type TownTemplate struct {
+	Id             int
 	Name           string
 	Tier           int
 	X              int
 	Y              int
 	WarehouseLimit float64
-	Wares          []WareGood
-	Visited int
+	Wares          map[int]WareGood
+	Visited        int
 }
 
 type FreeCell struct {
@@ -91,10 +102,9 @@ type FreeCell struct {
 }
 
 type Resources struct {
-	Id int
+	Id              int
 	RequiredPerUnit int
 }
-
 
 type TradingGood struct {
 	Id          int
@@ -102,10 +112,10 @@ type TradingGood struct {
 	Name        string
 	PriceMin    float64
 	PriceMax    float64
-	SellingUnit string
+	Unit        string
 	UnitVolume  float64
 	UnitWeight  float64
-	Resources 	[]Resources
+	Resources   []Resources
 	Consumables []Resources
 }
 
@@ -115,22 +125,24 @@ type WareGood struct {
 }
 
 var (
-	GlobalMap  MapDef
-	Goods      []TradingGood
-	Towns      []TownTemplate
-	Caravan    CaravanTemplate
-	GlobalStep int
+	GlobalMap    MapDef
+	GlobalPause  bool
+	GlobalTicker *time.Ticker
+	GlobalStep   int
 	TotalVisited int
 
-	app *tview.Application
+	Goods        map[int]TradingGood
+	Towns        map[int]TownTemplate
+	Caravan      CaravanTemplate
 
+	app         *tview.Application
 	textMap     *tview.TextView
 	textLog     *tview.TextView
 	textTown    *tview.TextView
 	textCaravan *tview.TextView
 )
 
-func PrintMap(Map MapDef, Towns []TownTemplate, Caravan CaravanTemplate) string {
+func PrintMap(Map MapDef, Towns map[int]TownTemplate, Caravan CaravanTemplate) string {
 	// ╗ ╝ ╚ ╔ ╩ ╦ ╠ ═ ║ ╬ ╣ - borders
 	// │ ┤ ┐ └ ┴ ┬ ├ ─ ┼ ┘ ┌ - roads
 	// @ - caravan
@@ -138,46 +150,46 @@ func PrintMap(Map MapDef, Towns []TownTemplate, Caravan CaravanTemplate) string 
 	var PrintableMap string
 	var ColorTag string
 
-	for posX := 0; posX <= Map.Height + 1; posX++ {
-		for posY := 0; posY <= Map.Width + 1; posY++ {
+	for posX := 0; posX <= Map.Height+1; posX++ {
+		for posY := 0; posY <= Map.Width+1; posY++ {
 
 			//fmt.Printf("X:%d, Y:%d\n", posX, posY)
 
 			if posY == 0 {
-				if posX == 0 { 												// left upper corner
+				if posX == 0 { // left upper corner
 					PrintableMap = PrintableMap + "╔"
-				} else if posX == (Map.Height + 1) { 	// left bottom corner
+				} else if posX == (Map.Height + 1) { // left bottom corner
 					PrintableMap = PrintableMap + "╚"
 				} else {
-					PrintableMap = PrintableMap + "║" 	// left border
+					PrintableMap = PrintableMap + "║" // left border
 				}
-			
+
 			} else if posY == (Map.Width + 1) {
-				if posX == 0 { 												// right upper corner
+				if posX == 0 { // right upper corner
 					PrintableMap = PrintableMap + "╗\n"
-				} else if posX == (Map.Height + 1) { 	// right  bottom corner
+				} else if posX == (Map.Height + 1) { // right  bottom corner
 					PrintableMap = PrintableMap + "╝\n"
 				} else {
 					PrintableMap = PrintableMap + "║\n" // right border
 				}
-			
+
 			} else {
-				if posX == (Map.Height + 1) || posX == 0 { // up and bottom border
+				if posX == (Map.Height+1) || posX == 0 { // up and bottom border
 					PrintableMap = PrintableMap + "═"
 				} else { // fill space inside map borders and place towns
-					
+
 					var mapObject string = " "
 					for _, town := range Towns {
 						if town.X == posX && town.Y == posY {
 							switch Tier := town.Tier; Tier {
-								case 1:
-									ColorTag = "red"
-								case 2:
-									ColorTag = "orange"
-								case 3:
-									ColorTag = "green"
-								default:
-									ColorTag = "white"
+							case 1:
+								ColorTag = "red"
+							case 2:
+								ColorTag = "orange"
+							case 3:
+								ColorTag = "green"
+							default:
+								ColorTag = "white"
 							}
 							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:1], "white")
 							//mapObject = fmt.Sprintf("%s", town.Name[0:1])
@@ -234,55 +246,55 @@ func GenerateRandomPosition(MaxX int, MaxY int) (X int, Y int) {
 func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int) []TownTemplate {
 
 	var Towns []TownTemplate
-	var Wares []WareGood
+	var Wares map[int]WareGood
 	var MaxTier2 int
 	var MaxTier3 int
 	var Tier2 int = 1
 	var Tier3 int = 1
 
-	if TownCount > 26 {
-		TownCount = 26
+	if TownCount > 26 { TownCount = 26 }
+
+	MaxTier2 = RndRange(2, 3)
+	MaxTier3 = RndRange(1, 2)
+
+	alphabet := [26]string{
+		"Alpha", "Bravo", "Charlie", "Delta",
+		"Echo", "Foxtrot", "Golf", "Hotel",
+		"India", "Juliet", "Kilo", "Lima",
+		"Mike", "November", "Oscar", "Papa",
+		"Quebec", "Romeo", "Sierra", "Tango",
+		"Uniform", "Victor", "Whiskey", "X-ray",
+		"Yankee", "Zulu",
 	}
 
-	MaxTier2 = RndRange(1,2)
-	MaxTier3 = RndRange(1,1)
-
-	alphabet := [26]string{"Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"}
-
-	for i := 0; i <= TownCount - 1; i++ {
+	for i := 0; i <= TownCount-1; i++ {
 
 		FreeCells := GetFreeCellsOnMap((*BitMap))
 
-		if len(FreeCells) == 0 {
-			break
-		}
+		if len(FreeCells) == 0 { break }
 
 		//fmt.Printf("Free: %d\n", len(FreeCells))
 
 		NextFreeCell := RndRange(0, len(FreeCells)-1)
-
 		PutTownOnBitMap(Map, &(*BitMap), FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, MinDistance)
 
-		Wares = nil
+		Wares = make(map[int]WareGood)
 
-		for j, Good := range Goods {
-			if j == 0 {
-				continue
-			}
-			Wares = append(Wares, WareGood{Id: Good.Id, Quantity: float64(Rnd(500))})
-
+		for key := range Goods {
+			Wares[key] = WareGood{key, float64(Rnd(500)),}
 		}
-
 		Towns = append(Towns, TownTemplate{Name: alphabet[i], Tier: 1, X: FreeCells[NextFreeCell].X, Y: FreeCells[NextFreeCell].Y, WarehouseLimit: 500.0, Wares: Wares})
-
 	}
 
-	/*for _, t := range Towns {
-		fmt.Printf("%s %d\n", t.Name, t.Tier)
-	}*/
+	for _, t := range Towns {
+		fmt.Printf("%+v\n", t)
+	}
 
 	for {
-		if Tier2 > MaxTier2 { break }
+		break
+		if Tier2 > MaxTier2 {
+			break
+		}
 		t := Rnd(len(Towns) - 1)
 		if Towns[t].Tier == 1 {
 			Tier2++
@@ -291,14 +303,16 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 	}
 
 	for {
-		if Tier3 > MaxTier3 { break }
+		break
+		if Tier3 > MaxTier3 {
+			break
+		}
 		t := Rnd(len(Towns) - 1)
 		if Towns[t].Tier == 1 {
 			Tier3++
 			Towns[t].Tier = 3
 		}
 	}
-
 
 	return Towns
 }
@@ -333,13 +347,12 @@ func GetFreeCellsOnMap(BitMap [][]byte) []FreeCell {
 
 	var FreeCells []FreeCell
 
-/*for x, i := range BitMap {
+	/*for x, i := range BitMap {
 		for y := range i {
 			fmt.Printf("%v", BitMap[x][y])
 		}
 		fmt.Printf("\n")
 	}*/
-
 
 	for x, i := range BitMap {
 		for y := range i {
@@ -444,87 +457,207 @@ func FindPath(StartX int, StartY int, DestX int, DestY int) {
 	return
 }
 
+func CaravanCalculateCargoCapacity(Caravan *CaravanTemplate) float64 {
 
+	var Capacity float64
 
-func CaravanSelectDestination(Caravan *CaravanTemplate) {}
+	if len(Caravan.Cargo) == 0 {
+		return 0
+	}
 
+	for _, c := range Caravan.Cargo {
+		Capacity += c.Quantity
+	}
+	//Caravan.Capacity = Capacity
+	return Capacity
+}
 
-func CaravanMoveToTown(Caravan *CaravanTemplate) {}
+func CaravanSelectDestination(Caravan *CaravanTemplate) {
+
+	Caravan.PrevTarget = Caravan.Target
+
+	for {
+		Caravan.Target = RndRange(0, len(Towns)-1)
+		if Caravan.Target != Caravan.PrevTarget {
+			break
+		}
+	}
+}
+
+func CaravanMoveToTown(Caravan *CaravanTemplate) {
+
+	Caravan.X, Caravan.Y = FindBestNextPoint(Caravan.X, Caravan.Y, Towns[Caravan.Target].X, Towns[Caravan.Target].Y)
+
+	if Caravan.X == Towns[Caravan.Target].X && Caravan.Y == Towns[Caravan.Target].Y {
+
+		TextLog := fmt.Sprintf("Прибыл в \"%s\" на шаге %d\n", Towns[Caravan.Target].Name, GlobalStep)
+		PrintToGameLog(TextLog)
+
+		Caravan.Status = CaravanStatusInTown
+		CaravanSelectDestination(Caravan)
+
+	} else {
+		Caravan.Status = CaravanStatusMoving
+	}
+}
 
 func TownGetWarePrice(Town TownTemplate, WareId int) float64 {
 	Price := Goods[WareId].PriceMin + (Goods[WareId].PriceMax - Goods[WareId].PriceMin)*(1.0 - Town.Wares[WareId].Quantity/Town.WarehouseLimit)
 	return Price
 }
 
-func TownGetWareWithLowestPrice(Town *TownTemplate) int {
-	return 0
+func TownGetWareWithLowestPrice(Town TownTemplate) int {
+
+	var LowestPrice = math.Inf(1)
+	var Price float64
+	var Id int
+
+	for _, Ware := range Town.Wares {
+		Price = TownGetWarePrice(Town, Ware.Id)
+		if Price < LowestPrice {
+			LowestPrice = Price
+			Id = Ware.Id
+		}
+	}
+
+	//PrintToGameLog(fmt.Sprintf("Ware: %d\n%+v\n\n", Id, Town))
+
+	return Id
 }
 
-
-func SellForBestPrice(Caravan *CaravanTemplate) Cargo {
-	var c Cargo
-	return c
+func SellForBestPrice(Caravan *CaravanTemplate) {
+	if Caravan.Status != CaravanStatusInTown {
+		return
+	}
+	return 
 }
 
+func BuyForBestPrice(Caravan *CaravanTemplate) {
 
-func BuyForBestPrice(Caravan *CaravanTemplate) Cargo {
-	var c Cargo
-	return c
+	var (
+		TradeId      int
+		Price        float64
+		BuyAmount    float64
+		MaxBuyAmount float64
+		TextLog      string
+	)
+
+	if Caravan.Status != CaravanStatusInTown {
+		return
+	}
+
+	/*
+		BuyMaxPrice:     0.25,
+		BuyFullCapacity: true,
+		BuyMaxAmount:    0.50,
+		BuyMinAmount:    0.10,
+		SellWithProfit:  true,
+		SellMinPrice:    0.50,
+	*/
+
+	MaxBuyAmount = Caravan.CapacityMax - CaravanCalculateCargoCapacity(Caravan)
+	//fmt.Fprintf(textLog, "- Можем купить: %.0f (%0.f - %0.f)\n", MaxBuyAmount, Caravan.CapacityMax, CaravanCalculateCargoCapacity(Caravan))
+
+	TradeId = TownGetWareWithLowestPrice(Towns[Caravan.PrevTarget])
+	//fmt.Fprintf(textLog, "- К покупке: id: %d, %s\n", TradeId, Goods[TradeId].Name)
+
+	if Towns[Caravan.PrevTarget].Wares[TradeId].Quantity > MaxBuyAmount {
+		BuyAmount = MaxBuyAmount
+	} else {
+		BuyAmount = Towns[Caravan.PrevTarget].Wares[TradeId].Quantity
+	}
+
+	if BuyAmount == 0 {
+		return
+	}
+	
+	Price = TownGetWarePrice(Towns[Caravan.PrevTarget], TradeId)
+
+	if BuyAmount > math.Floor(Caravan.Money / Price) {
+		BuyAmount = math.Floor(Caravan.Money / Price)
+	}
+
+		//fmt.Fprintf(textLog, "--- %+v\n", Towns[Caravan.PrevTarget].Wares[TradeId])
+
+	Towns[Caravan.PrevTarget].Wares[TradeId] = WareGood{TradeId, Towns[Caravan.PrevTarget].Wares[TradeId].Quantity - BuyAmount}
+	Caravan.Cargo = append(Caravan.Cargo, Cargo{WareId: TradeId, TownId: Caravan.PrevTarget, Quantity: BuyAmount, BuyPrice: Price})
+
+	Caravan.Money -= BuyAmount * Price
+
+	TextLog = fmt.Sprintf("  Куплено: %s, кол-во: %.1f, цена: %.2f\n", Goods[TradeId].Name, BuyAmount, Price)
+
+	PrintToGameLog(TextLog)
+	
+	return
 }
 
-
-func RedrawViewMap(){
-
+func RedrawViewMap() {
 	textMap.SetText(PrintMap(GlobalMap, Towns, Caravan))
-	fmt.Fprintf(textMap, "Size %dx%d Global step: %d\n", GlobalMap.Width, GlobalMap.Height, GlobalStep)
-
+	fmt.Fprintf(textMap, "Размер %dx%d Глобальный шаг: %d\n", GlobalMap.Width, GlobalMap.Height, GlobalStep)
 }
 
+func RedrawViewCaravan() {
 
-func RedrawViewCaravan(){
-
-	CaravanStatus := fmt.Sprintf("Destination: %s (%d, %d)\nPosition: %d:%d\n\nCargo (%.0f/%.0f):\n", 
-		Towns[Caravan.Target].Name, 
-		Towns[Caravan.Target].Y, 
-		Towns[Caravan.Target].X, 
-		Caravan.Y, 
+	CaravanStatus := fmt.Sprintf("Назначение: %s (%d, %d)\nПозиция: %d:%d\nДеньги: %.2f\n\nГруз (%.0f/%.0f):\n",
+		Towns[Caravan.Target].Name,
+		Towns[Caravan.Target].Y,
+		Towns[Caravan.Target].X,
+		Caravan.Y,
 		Caravan.X,
-		Caravan.Capacity,
+		Caravan.Money,
+		CaravanCalculateCargoCapacity(&Caravan),
 		Caravan.CapacityMax)
 
-		/*
+	/*
 		TradingGoodId int
 		Quantity float64
 		BuyPrice float64
-		*/
+	*/
 	if len(Caravan.Cargo) > 0 {
 		for _, cargo := range Caravan.Cargo {
-			CaravanStatus += fmt.Sprintf("  %s qnt: %.0f prc: %.0f\n",
-			Goods[cargo.TradingGoodId].Name,
-			cargo.Quantity,
-			cargo.BuyPrice)	
+			CaravanStatus += fmt.Sprintf("  %s кол: %.0f, цена: %.2f, куплено в: %s\n",
+				Goods[cargo.WareId].Name,
+				cargo.Quantity,
+				cargo.BuyPrice,
+				Towns[cargo.TownId].Name)
 		}
 	} else {
-		CaravanStatus += "  none"
+		CaravanStatus += "  нет"
 	}
-		
+
 	textCaravan.SetText(CaravanStatus + "\n")
 }
 
-func RedrawViewTown(){
-	
-	textTown.SetText(Towns[Caravan.Target].Name + "\n")
+func RedrawViewTown() {
 
-	for _, ware := range Towns[Caravan.Target].Wares {
-		//Price := Goods[ware.Id].PriceMin + (Goods[ware.Id].PriceMax-Goods[ware.Id].PriceMin)*(1.0-ware.Quantity/Towns[Caravan.Target].WarehouseLimit)
-		Price := math.Round(TownGetWarePrice(Towns[Caravan.Target], ware.Id))
-		fmt.Fprintf(textTown,"%s: %.0f/%.0f Цена: %.0f\n", Goods[ware.Id].Name, ware.Quantity, Towns[Caravan.Target].WarehouseLimit, Price)
+	textTown.SetText("")
+
+	// Текущий пункт назначения
+	fmt.Fprintf(textTown, "Куда идем: %s\n", Towns[Caravan.Target].Name)
+
+	for key := 1; key <= len(Towns[Caravan.Target].Wares); key++ {
+		Price := TownGetWarePrice(Towns[Caravan.Target], key)
+
+		fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2f\n", Goods[key].Name, Towns[Caravan.Target].Wares[key].Quantity, Towns[Caravan.Target].WarehouseLimit, Price)
 	}
 
-	fmt.Fprintf(textTown,"\n")
+	fmt.Fprintf(textTown, "\n")
+
+	// Предыдущий пункт назначения
+	if Caravan.PrevTarget != -1 {
+
+		fmt.Fprintf(textTown, "Где был: %s\n", Towns[Caravan.PrevTarget].Name)
+
+		for key := 1; key <= len(Towns[Caravan.PrevTarget].Wares); key++ {
+			Price := TownGetWarePrice(Towns[Caravan.PrevTarget], key)
+			fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2f\n", Goods[key].Name, Towns[Caravan.PrevTarget].Wares[key].Quantity, Towns[Caravan.PrevTarget].WarehouseLimit, Price)
+		}
+
+		fmt.Fprintf(textTown, "\n\n")
+	}
 }
 
-func RedrawViewLog(){}
+func RedrawViewLog() {}
 
 func RedrawScreen() {
 	RedrawViewMap()
@@ -534,22 +667,22 @@ func RedrawScreen() {
 }
 
 func PrintToGameLog(Text string) {
-
+	fmt.Fprintf(textLog, "%s", Text)
 }
 
 func GlobalActions() {
 	/*
-	
-	Глобальные действия:
-		Город
-			цикл производства
 
-		Караван 
-			перемещение по карте
-			продать товары
-			купить товары
-		
-		Перерисовать интерфейс
+		Глобальные действия:
+			Город
+				цикл производства
+
+			Караван
+				продать товары
+				купить товары
+				перемещение по карте
+
+			Перерисовать интерфейс
 	*/
 
 	CaravanMoveToTown(&Caravan)
@@ -558,19 +691,16 @@ func GlobalActions() {
 
 	BuyForBestPrice(&Caravan)
 
-	
-
 	// Перерисовать интерфейс после всех действий
 	RedrawScreen()
 }
 
-
 func GlobalTick() {
-	tick := time.NewTicker(refreshInterval)
+	GlobalTicker = time.NewTicker(refreshInterval)
 
 	for {
 		select {
-		case <-tick.C:
+		case <-GlobalTicker.C:
 			//t := time.Now().Format("15:04:05")
 
 			GlobalStep++
@@ -579,81 +709,6 @@ func GlobalTick() {
 
 				// Выполнить все действия
 				GlobalActions()
-				
-				if Caravan.X == Towns[Caravan.Target].X && Caravan.Y == Towns[Caravan.Target].Y {
-
-					fmt.Fprintf(textLog, "Arrived to destination \"%s\" at step %d\n", Towns[Caravan.Target].Name, GlobalStep)
-					
-					Towns[Caravan.Target].Visited++
-					TotalVisited++
-
-					//textTown.SetText(Towns[Caravan.Target].Name + "\n\n")
-
-					//fmt.Fprintf(textTown,"Visited: %d\n\n", Towns[Caravan.Target].Visited)
-					//TownsList := ""
-					/*TownsList += fmt.Sprintf("Count: %d\n", len(Towns))
-					TownsList += fmt.Sprintf("Total visited: %d\n", TotalVisited)
-					TownsList += fmt.Sprintf("Calculated: %.2f%%\n\n", 1.0/float64(len(Towns))*100.0)*/
-
-					/*for _, t := range Towns {
-						TownsList += fmt.Sprintf("%s: %d %.2f%%\n", t.Name[0:1], t.Visited,  float64(t.Visited)/float64(TotalVisited)*100.0)
-					}*/
-
-					TradeId := 0	
-					BuyAmount := 0.0
-					/*
-					TradingGoodId int
-					Quantity float64
-					BuyPrice float64
-					*/
-					
-					// Sell
-					if len(Caravan.Cargo) > 0 {
-						//fmt.Fprintf(textLog, "Dummy sell action\n")
-					}
-
-					// Buy
-					if Caravan.Capacity <  Caravan.CapacityMax {
-
-
-						TradeId = Rnd(len(Towns[Caravan.Target].Wares) - 1)
-
-						if Towns[Caravan.Target].Wares[TradeId].Quantity > Caravan.Capacity {
-							//BuyAmount = Caravan.CapacityMax - Caravan.Capacity
-							BuyAmount = 25
-
-							Price := Goods[TradeId].PriceMin + (Goods[TradeId].PriceMax-Goods[TradeId].PriceMin)*(1.0 - Towns[Caravan.Target].Wares[TradeId].Quantity / Towns[Caravan.Target].WarehouseLimit)
-							Price = math.Round(Price)
-							
-							Towns[Caravan.Target].Wares[TradeId].Quantity -= BuyAmount
-							Caravan.Cargo = append(Caravan.Cargo, Cargo{TradingGoodId: TradeId, Quantity: BuyAmount, BuyPrice: Price})
-							Caravan.Capacity += BuyAmount
-						
-							fmt.Fprintf(textLog, " - Bought: %s, quantity: %.0f, price: %.0f\n", Goods[TradeId].Name, BuyAmount, Price)
-
-						} else {
-
-
-						}
-
-					}
-
-
-					Caravan.PrevTarget = Caravan.Target
-
-					for {
-						Caravan.Target = RndRange(0, len(Towns)-1)
-						if Caravan.Target != Caravan.PrevTarget {
-							break
-						}
-					}
-
-				}
-
-				tX, tY := FindBestNextPoint(Caravan.X, Caravan.Y, Towns[Caravan.Target].X, Towns[Caravan.Target].Y)
-
-				Caravan.X = tX
-				Caravan.Y = tY
 
 			})
 		}
@@ -681,43 +736,56 @@ func init() {
 
 	*/
 
-	Goods = []TradingGood{
-		{Id: 0, Tier: 0, Name: "Шаблон", PriceMin: 1, PriceMax: 1, SellingUnit: "ед.", UnitVolume: 1.0, UnitWeight: 1.0},
-		{Id: 1, Tier: 1, Name: "Зерно", PriceMin: 2, PriceMax: 10, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050},
-		{Id: 2, Tier: 1, Name: "Дерево", PriceMin: 5, PriceMax: 20, SellingUnit: "кубометр", UnitVolume: 1.0, UnitWeight: 0.640},
-		{Id: 3, Tier: 1, Name: "Камень", PriceMin: 4, PriceMax: 18, SellingUnit: "кубометр", UnitVolume: 1.0, UnitWeight: 1.7},
-		{Id: 4, Tier: 1, Name: "Руда", PriceMin: 9, PriceMax: 30, SellingUnit: "тонна", UnitVolume: 0.5, UnitWeight: 1.0},
-		
-		/*{Id: 5, Tier: 2, Name: "Мука", PriceMin: 40, PriceMax: 75, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050, 
-			Resources: []Resources{
-				Resources{Id: 1, RequiredPerUnit: 8},
-			},
-		},
-		{Id: 6, Tier: 2, Name: "Доски", PriceMin: 50, PriceMax: 100, SellingUnit: "кубометр", UnitVolume: 0.0, UnitWeight: 0.0, 
-			Resources: []Resources{
-				Resources{Id: 2, RequiredPerUnit: 8},
-			},
-		},
-		{Id: 7, Tier: 2, Name: "Каменная заготовка", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0, 
-			Resources: []Resources{
-				Resources{Id: 3, RequiredPerUnit: 8},
-			},
-		},
-		{Id: 8, Tier: 2, Name: "Металлические инструменты", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0, 
-			Resources: []Resources{
-				Resources{Id: 4, RequiredPerUnit: 8},
-			},
-		},
-		{Id: 9, Tier: 3, Name: "Деревянная мебель", PriceMin: 100, PriceMax: 200, SellingUnit: "", UnitVolume: 0.0, UnitWeight: 0.0, 
-			Resources: []Resources{
-				Resources{Id: 2, RequiredPerUnit: 4},
-				Resources{Id: 6, RequiredPerUnit: 8},
-			},
-			Consumables: []Resources{
-				Resources{Id: 8, RequiredPerUnit: 1},
-			},
-		},*/
+	/*
+		Id          int
+		Tier        int
+		Name        string
+		PriceMin    float64
+		PriceMax    float64
+		SellingUnit string
+		UnitVolume  float64
+		UnitWeight  float64
+		Resources   []Resources
+		Consumables []Resources
+	*/
+
+	Goods = map[int]TradingGood{
+		//						Id, Tier, Name, PriceMin, PriceMax, Unit
+		1: TradingGood{1, 1, "Зерно", 2, 10, "мешок", 0.036, 0.050, nil, nil},
+		2: TradingGood{2, 1, "Дерево", 5, 20, "кубометр", 1.0, 0.640, nil, nil},
+		3: TradingGood{3, 1, "Камень", 4, 18, "кубометр", 1.0, 1.7, nil, nil},
+		4: TradingGood{4, 1, "Руда", 9, 30, "тонна", 0.5, 1.0, nil, nil},
 	}
+	/*{Id: 5, Tier: 2, Name: "Мука", PriceMin: 40, PriceMax: 75, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050,
+		Resources: []Resources{
+			Resources{Id: 1, RequiredPerUnit: 8},
+		},
+	},
+	{Id: 6, Tier: 2, Name: "Доски", PriceMin: 50, PriceMax: 100, SellingUnit: "кубометр", UnitVolume: 0.0, UnitWeight: 0.0,
+		Resources: []Resources{
+			Resources{Id: 2, RequiredPerUnit: 8},
+		},
+	},
+	{Id: 7, Tier: 2, Name: "Каменная заготовка", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0,
+		Resources: []Resources{
+			Resources{Id: 3, RequiredPerUnit: 8},
+		},
+	},
+	{Id: 8, Tier: 2, Name: "Металлические инструменты", PriceMin: 1, PriceMax: 100, SellingUnit: "партия", UnitVolume: 0.0, UnitWeight: 0.0,
+		Resources: []Resources{
+			Resources{Id: 4, RequiredPerUnit: 8},
+		},
+	},
+	{Id: 9, Tier: 3, Name: "Деревянная мебель", PriceMin: 100, PriceMax: 200, SellingUnit: "", UnitVolume: 0.0, UnitWeight: 0.0,
+		Resources: []Resources{
+			Resources{Id: 2, RequiredPerUnit: 4},
+			Resources{Id: 6, RequiredPerUnit: 8},
+		},
+		Consumables: []Resources{
+			Resources{Id: 8, RequiredPerUnit: 1},
+		},
+	},*/
+
 }
 
 func main() {
@@ -739,6 +807,22 @@ func main() {
 	}*/
 
 	app = tview.NewApplication()
+
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case 256:
+			if GlobalPause == false {
+				GlobalPause = true
+				GlobalTicker.Stop()
+				textMap.SetTitle("Map - ПАУЗА")
+			} else {
+				GlobalPause = false
+				GlobalTicker.Reset(refreshInterval)
+				textMap.SetTitle("Map")
+			}
+		}
+		return event
+	})
 
 	textMap = tview.NewTextView().
 		SetDynamicColors(true).
@@ -801,7 +885,7 @@ func main() {
 
 	//SetupCloseHandler()
 
-	Size = 10
+	Size = 15
 	MinDistance = 5
 	MaxTownsCount = 26
 
@@ -810,21 +894,25 @@ func main() {
 
 	log.Println("Create bitmap")
 	bitMap := MakeBitMap(GlobalMap.Width, GlobalMap.Height)
-	
+
 	log.Println("Put towns on map")
 	Towns = PutTownsOnMap(GlobalMap, &bitMap, MaxTownsCount, MinDistance)
 
+	log.Println("Generate Caravan")
 	Caravan = CaravanTemplate{
-		Name: "Caravan",
-		Status: "At point",
-		X: 1, Y: 1,
+		Name:        "Caravan",
+		Status:      CaravanStatusStarting,
+		X:           1,
+		Y:           1,
+		Money:       1000,
 		CapacityMax: 100.0,
 		TradeConfig: TradeConfig{
-			BuyMaxPrice: 25,
+			BuyMaxPrice:     0.25,
 			BuyFullCapacity: true,
-			BuyMaxAmount: 50,
-			SellWithProfit: true,
-			SellMinPrice: 50,
+			BuyMaxAmount:    0.50,
+			BuyMinAmount:    0.10,
+			SellWithProfit:  true,
+			SellMinPrice:    0.50,
 		},
 	}
 
@@ -834,7 +922,7 @@ func main() {
 	//fmt.Println(PrintMap(GlobalMap, Towns, Caravan))
 	//fmt.Printf("%+v\n",GlobalMap)
 
-//	os.Exit(0)
+	//	os.Exit(0)
 
 	go GlobalTick()
 
@@ -969,7 +1057,3 @@ func SetupCloseHandler() {
 	if err := app.SetRoot(grid, true).SetFocus(grid).Run(); err != nil {
 		panic(err)
 	}*/
-
-// Status:
-//  At point
-//  Moving
