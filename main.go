@@ -24,6 +24,12 @@ const CaravanStatusMoving uint8 = 1
 const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
 
+const TownBaseWarehouseLimit = 500.0
+
+const MapSize = 15
+const MapMinDistance = 5
+const MapMaxTownsCount = 26
+
 type PositionDef struct {
 	X int
 	Y int
@@ -85,6 +91,12 @@ type CaravanTemplate struct {
 	TradeConfig TradeConfig
 }
 
+type TownConfigTemplate struct {
+	WarehouseLimit float64
+	ColorTag string
+}
+
+
 type TownTemplate struct {
 	Id             int
 	Name           string
@@ -131,9 +143,10 @@ var (
 	GlobalStep   int
 	TotalVisited int
 
-	Goods        map[int]TradingGood
-	Towns        map[int]TownTemplate
-	Caravan      CaravanTemplate
+	Goods   map[int]TradingGood
+	Towns   map[int]TownTemplate
+	TownConfig map[int]TownConfigTemplate
+	Caravan CaravanTemplate
 
 	app         *tview.Application
 	textMap     *tview.TextView
@@ -243,19 +256,24 @@ func GenerateRandomPosition(MaxX int, MaxY int) (X int, Y int) {
 	return X, Y
 }
 
-func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int) []TownTemplate {
+func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
 
-	var Towns []TownTemplate
+	var Towns map[int]TownTemplate
 	var Wares map[int]WareGood
 	var MaxTier2 int
 	var MaxTier3 int
 	var Tier2 int = 1
 	var Tier3 int = 1
 
-	if TownCount > 26 { TownCount = 26 }
+	if TownCount > 26 {
+		TownCount = 26
+	}
 
 	MaxTier2 = RndRange(2, 3)
 	MaxTier3 = RndRange(1, 2)
+	
+	Wares = make(map[int]WareGood)
+	Towns = make(map[int]TownTemplate)
 
 	alphabet := [26]string{
 		"Alpha", "Bravo", "Charlie", "Delta",
@@ -267,11 +285,13 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 		"Yankee", "Zulu",
 	}
 
-	for i := 0; i <= TownCount-1; i++ {
+	for i := 1; i <= TownCount; i++ {
 
 		FreeCells := GetFreeCellsOnMap((*BitMap))
 
-		if len(FreeCells) == 0 { break }
+		if len(FreeCells) == 0 {
+			break
+		}
 
 		//fmt.Printf("Free: %d\n", len(FreeCells))
 
@@ -281,39 +301,44 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 		Wares = make(map[int]WareGood)
 
 		for key := range Goods {
-			Wares[key] = WareGood{key, float64(Rnd(500)),}
+			Wares[key] = WareGood{key, float64(Rnd(500))}
 		}
-		Towns = append(Towns, TownTemplate{Name: alphabet[i], Tier: 1, X: FreeCells[NextFreeCell].X, Y: FreeCells[NextFreeCell].Y, WarehouseLimit: 500.0, Wares: Wares})
+		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
+		Towns[i] = TownTemplate{i, alphabet[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, TownBaseWarehouseLimit, Wares, 0}
+	}
+
+
+	for {
+		//break
+		if Tier2 > MaxTier2 {
+			break
+		}
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier2++
+			t1 := Towns[t]
+			t1.Tier = 2
+			Towns[t] = t1
+		}
+	}
+
+	for {
+		//break
+		if Tier3 > MaxTier3 {
+			break
+		}
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier3++
+			t1 := Towns[t]
+			t1.Tier = 3
+			Towns[t] = t1
+		}
 	}
 
 	for _, t := range Towns {
 		fmt.Printf("%+v\n", t)
 	}
-
-	for {
-		break
-		if Tier2 > MaxTier2 {
-			break
-		}
-		t := Rnd(len(Towns) - 1)
-		if Towns[t].Tier == 1 {
-			Tier2++
-			Towns[t].Tier = 2
-		}
-	}
-
-	for {
-		break
-		if Tier3 > MaxTier3 {
-			break
-		}
-		t := Rnd(len(Towns) - 1)
-		if Towns[t].Tier == 1 {
-			Tier3++
-			Towns[t].Tier = 3
-		}
-	}
-
 	return Towns
 }
 
@@ -330,10 +355,18 @@ func PutTownOnBitMap(Map MapDef, BitMap *[][]byte, TownX int, TownY int, Distanc
 			tY := TownY + j
 
 			if C <= Distance {
-				if tY > (Map.Width - 1) { tY = Map.Width - 1 }
-				if tX > (Map.Height - 1) { tX = Map.Height - 1 }
-				if tX < 0 { tX = 0 }
-				if tY < 0 { tY = 0 }
+				if tY > (Map.Width - 1) {
+					tY = Map.Width - 1
+				}
+				if tX > (Map.Height - 1) {
+					tX = Map.Height - 1
+				}
+				if tX < 0 {
+					tX = 0
+				}
+				if tY < 0 {
+					tY = 0
+				}
 
 				(*BitMap)[tX][tY] = 1
 			}
@@ -477,7 +510,7 @@ func CaravanSelectDestination(Caravan *CaravanTemplate) {
 	Caravan.PrevTarget = Caravan.Target
 
 	for {
-		Caravan.Target = RndRange(0, len(Towns)-1)
+		Caravan.Target = RndRange(1, len(Towns))
 		if Caravan.Target != Caravan.PrevTarget {
 			break
 		}
@@ -490,7 +523,7 @@ func CaravanMoveToTown(Caravan *CaravanTemplate) {
 
 	if Caravan.X == Towns[Caravan.Target].X && Caravan.Y == Towns[Caravan.Target].Y {
 
-		TextLog := fmt.Sprintf("Прибыл в \"%s\" на шаге %d\n", Towns[Caravan.Target].Name, GlobalStep)
+		TextLog := fmt.Sprintf("[%d]: Прибыл в \"%s\"\n", GlobalStep, Towns[Caravan.Target].Name)
 		PrintToGameLog(TextLog)
 
 		Caravan.Status = CaravanStatusInTown
@@ -502,7 +535,7 @@ func CaravanMoveToTown(Caravan *CaravanTemplate) {
 }
 
 func TownGetWarePrice(Town TownTemplate, WareId int) float64 {
-	Price := Goods[WareId].PriceMin + (Goods[WareId].PriceMax - Goods[WareId].PriceMin)*(1.0 - Town.Wares[WareId].Quantity/Town.WarehouseLimit)
+	Price := Goods[WareId].PriceMin + (Goods[WareId].PriceMax-Goods[WareId].PriceMin)*(1.0-Town.Wares[WareId].Quantity/Town.WarehouseLimit)
 	return Price
 }
 
@@ -529,7 +562,7 @@ func SellForBestPrice(Caravan *CaravanTemplate) {
 	if Caravan.Status != CaravanStatusInTown {
 		return
 	}
-	return 
+	return
 }
 
 func BuyForBestPrice(Caravan *CaravanTemplate) {
@@ -570,16 +603,17 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 	if BuyAmount == 0 {
 		return
 	}
-	
+
 	Price = TownGetWarePrice(Towns[Caravan.PrevTarget], TradeId)
 
-	if BuyAmount > math.Floor(Caravan.Money / Price) {
+	if BuyAmount > math.Floor(Caravan.Money/Price) {
 		BuyAmount = math.Floor(Caravan.Money / Price)
 	}
 
-		//fmt.Fprintf(textLog, "--- %+v\n", Towns[Caravan.PrevTarget].Wares[TradeId])
+	//fmt.Fprintf(textLog, "--- %+v\n", Towns[Caravan.PrevTarget].Wares[TradeId])
 
 	Towns[Caravan.PrevTarget].Wares[TradeId] = WareGood{TradeId, Towns[Caravan.PrevTarget].Wares[TradeId].Quantity - BuyAmount}
+
 	Caravan.Cargo = append(Caravan.Cargo, Cargo{WareId: TradeId, TownId: Caravan.PrevTarget, Quantity: BuyAmount, BuyPrice: Price})
 
 	Caravan.Money -= BuyAmount * Price
@@ -587,7 +621,7 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 	TextLog = fmt.Sprintf("  Куплено: %s, кол-во: %.1f, цена: %.2f\n", Goods[TradeId].Name, BuyAmount, Price)
 
 	PrintToGameLog(TextLog)
-	
+
 	return
 }
 
@@ -736,6 +770,15 @@ func init() {
 
 	*/
 
+	
+	// Конфигурация города в зависимости от уровня (TownTemplate.Tier)
+	TownConfig = map[int]TownConfigTemplate{
+		//						WarehouseLimit, ColorTag
+		1: TownConfigTemplate{500.0, "[red]"},
+		2: TownConfigTemplate{1000.0, "[orange]"},
+		3: TownConfigTemplate{2000.0, "[green]"},
+	}
+
 	/*
 		Id          int
 		Tier        int
@@ -789,12 +832,6 @@ func init() {
 }
 
 func main() {
-
-	var (
-		Size          int
-		MinDistance   int
-		MaxTownsCount int
-	)
 
 	/*for _, Good := range Goods {
 		fmt.Printf("%s[%d] цена: %.1f/%.1f\n", Good.Name, Good.Tier, Good.PriceMin, Good.PriceMax)
@@ -872,7 +909,7 @@ func main() {
 
 	grid := tview.NewGrid().
 		SetRows(-1, -1).
-		SetColumns(-2, -2, -3).
+		SetColumns(-2, -2, -2).
 		SetMinSize(15, 20).
 		SetBorders(false)
 
@@ -885,18 +922,18 @@ func main() {
 
 	//SetupCloseHandler()
 
-	Size = 15
+/*	Size = 15
 	MinDistance = 5
-	MaxTownsCount = 26
+	MaxTownsCount = 26*/
 
 	log.Println("Create global map")
-	GlobalMap = MapDef{Width: Size * 2, Height: Size}
+	GlobalMap = MapDef{Width: MapSize * 2, Height: MapSize}
 
 	log.Println("Create bitmap")
 	bitMap := MakeBitMap(GlobalMap.Width, GlobalMap.Height)
 
 	log.Println("Put towns on map")
-	Towns = PutTownsOnMap(GlobalMap, &bitMap, MaxTownsCount, MinDistance)
+	Towns = PutTownsOnMap(GlobalMap, &bitMap, MapMaxTownsCount, MapMinDistance)
 
 	log.Println("Generate Caravan")
 	Caravan = CaravanTemplate{
