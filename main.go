@@ -9,17 +9,12 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	//"github.com/jroimartin/gocui"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-const refreshInterval = 1000 * time.Millisecond
+const TickerInterval = 1000 * time.Millisecond
 
-// Status:
-//
-//	At point
-//	Moving
 const CaravanStatusMoving uint8 = 1
 const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
@@ -27,15 +22,11 @@ const CaravanStatusStarting uint8 = 255
 const TownBaseWarehouseLimit = 500.0
 
 const MapSize = 15
+const MapWidthFactor = 3
 const MapMinDistance = 5
 const MapMaxTownsCount = 26
 
-type PositionDef struct {
-	X int
-	Y int
-}
-
-type MapDef struct {
+type MapTemplate struct {
 	Width  int
 	Height int
 }
@@ -96,7 +87,6 @@ type TownConfigTemplate struct {
 	ColorTag string
 }
 
-
 type TownTemplate struct {
 	Id             int
 	Name           string
@@ -137,9 +127,10 @@ type WareGood struct {
 }
 
 var (
-	GlobalMap    MapDef
+	GlobalMap    MapTemplate
 	GlobalPause  bool
 	GlobalTicker *time.Ticker
+	GlobalSpeedFactor time.Duration
 	GlobalStep   int
 	TotalVisited int
 
@@ -153,9 +144,12 @@ var (
 	textLog     *tview.TextView
 	textTown    *tview.TextView
 	textCaravan *tview.TextView
+
+	Alphabet []string
+	AlphabetRU []string
 )
 
-func PrintMap(Map MapDef, Towns map[int]TownTemplate, Caravan CaravanTemplate) string {
+func PrintMap(Map MapTemplate, Towns map[int]TownTemplate, Caravan CaravanTemplate) string {
 	// ╗ ╝ ╚ ╔ ╩ ╦ ╠ ═ ║ ╬ ╣ - borders
 	// │ ┤ ┐ └ ┴ ┬ ├ ─ ┼ ┘ ┌ - roads
 	// @ - caravan
@@ -204,7 +198,7 @@ func PrintMap(Map MapDef, Towns map[int]TownTemplate, Caravan CaravanTemplate) s
 							default:
 								ColorTag = "white"
 							}
-							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:1], "white")
+							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
 							//mapObject = fmt.Sprintf("%s", town.Name[0:1])
 						}
 					}
@@ -220,6 +214,7 @@ func PrintMap(Map MapDef, Towns map[int]TownTemplate, Caravan CaravanTemplate) s
 	}
 	return PrintableMap
 }
+
 
 func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
 
@@ -241,7 +236,7 @@ func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
 
 func RndRange(Min int, Max int) int {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(Max-Min+1) + Min
+	return rand.Intn(Max-Min+1)+Min
 }
 
 func Rnd(Max int) int {
@@ -256,7 +251,7 @@ func GenerateRandomPosition(MaxX int, MaxY int) (X int, Y int) {
 	return X, Y
 }
 
-func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
+func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
 
 	var Towns map[int]TownTemplate
 	var Wares map[int]WareGood
@@ -264,26 +259,17 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 	var MaxTier3 int
 	var Tier2 int = 1
 	var Tier3 int = 1
-
-	if TownCount > 26 {
-		TownCount = 26
-	}
-
-	MaxTier2 = RndRange(2, 3)
-	MaxTier3 = RndRange(1, 2)
 	
 	Wares = make(map[int]WareGood)
 	Towns = make(map[int]TownTemplate)
 
-	alphabet := [26]string{
-		"Alpha", "Bravo", "Charlie", "Delta",
-		"Echo", "Foxtrot", "Golf", "Hotel",
-		"India", "Juliet", "Kilo", "Lima",
-		"Mike", "November", "Oscar", "Papa",
-		"Quebec", "Romeo", "Sierra", "Tango",
-		"Uniform", "Victor", "Whiskey", "X-ray",
-		"Yankee", "Zulu",
+
+	if TownCount > len(AlphabetRU) {
+		TownCount = len(AlphabetRU)
 	}
+
+	MaxTier2 = RndRange(2, 3)
+	MaxTier3 = RndRange(1, 2)
 
 	for i := 1; i <= TownCount; i++ {
 
@@ -301,10 +287,10 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 		Wares = make(map[int]WareGood)
 
 		for key := range Goods {
-			Wares[key] = WareGood{key, float64(Rnd(500))}
+			Wares[key] = WareGood{key, float64(Rnd(50))}
 		}
 		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
-		Towns[i] = TownTemplate{i, alphabet[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, TownBaseWarehouseLimit, Wares, 0}
+		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, TownBaseWarehouseLimit, Wares, 0}
 	}
 
 
@@ -342,7 +328,7 @@ func PutTownsOnMap(Map MapDef, BitMap *[][]byte, TownCount int, MinDistance int)
 	return Towns
 }
 
-func PutTownOnBitMap(Map MapDef, BitMap *[][]byte, TownX int, TownY int, Distance int) {
+func PutTownOnBitMap(Map MapTemplate, BitMap *[][]byte, TownX int, TownY int, Distance int) {
 
 	for i := -Distance; i <= Distance; i++ {
 		for j := -Distance; j <= Distance; j++ {
@@ -693,16 +679,21 @@ func RedrawViewTown() {
 
 func RedrawViewLog() {}
 
+func RedrawViewStatus() {}
+
 func RedrawScreen() {
 	RedrawViewMap()
 	RedrawViewTown()
 	RedrawViewCaravan()
 	RedrawViewLog()
+	RedrawViewStatus()
 }
 
 func PrintToGameLog(Text string) {
 	fmt.Fprintf(textLog, "%s", Text)
 }
+
+func PrintToStatusBar(Text string) {}
 
 func GlobalActions() {
 	/*
@@ -730,7 +721,7 @@ func GlobalActions() {
 }
 
 func GlobalTick() {
-	GlobalTicker = time.NewTicker(refreshInterval)
+	GlobalTicker = time.NewTicker(TickerInterval/GlobalSpeedFactor)
 
 	for {
 		select {
@@ -751,6 +742,39 @@ func GlobalTick() {
 
 func init() {
 	log.Println("Init")
+
+	// 1, 2, 4
+	GlobalSpeedFactor = 1
+
+	Alphabet = []string{
+		"Alpha", "Bravo", "Charlie", "Delta",
+		"Echo", "Foxtrot", "Golf", "Hotel",
+		"India", "Juliet", "Kilo", "Lima",
+		"Mike", "November", "Oscar", "Papa",
+		"Quebec", "Romeo", "Sierra", "Tango",
+		"Uniform", "Victor", "Whiskey", "X-ray",
+		"Yankee", "Zulu",
+	}
+
+/*	AlphabetRU = []string{
+		"Анна", "Борис", "Василий", "Григорий",
+		"Дмитрий", "Елена", "Ёлка", "Женя",
+		"Зинаида", "Иван", "Константин", "Леонид",
+		"Михаил", "Николай", "Ольга", "Павел",
+		"Роман", "Семен", "Татьяна", "Ульяна",
+		"Федор", "Харитон", "Цапля", "Человек",
+		"Шура", "Щука", "Эхо", "Юрий", "Яков",
+	}*/
+
+	AlphabetRU = []string{
+		"Амурск", "Биробиджан", "Владивосток", "Грозный",
+		"Дубна", "Ейск", "Жуковский",	"Зеленоград",
+		"Иркутск", "Казань", "Липецк", "Мурманск",
+		"Ноглики", "Омск", "Партизанск", "Рязань",
+		"Смоленск", "Томск", "Уссурийск", "Феодосия",
+		"Хабаровск", "Цимлянск", "Чита", "Шатура",
+		"Щелково", "Элиста", "Южно-Сахалинск", "Якутск",
+	}
 
 	/*
 	  Id int
@@ -785,7 +809,7 @@ func init() {
 		Name        string
 		PriceMin    float64
 		PriceMax    float64
-		SellingUnit string
+		Unit 				string
 		UnitVolume  float64
 		UnitWeight  float64
 		Resources   []Resources
@@ -845,18 +869,54 @@ func main() {
 
 	app = tview.NewApplication()
 
+	textStatus := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(fmt.Sprintf("Сжатие времени: [green]х1[white] х2 х4 х8"))
+
+	textStatus.
+		SetBorder(true).
+		SetTitleAlign(tview.AlignLeft).
+		SetTitle("Статус")
+
+
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case 256:
+		//textStatus.SetText(fmt.Sprintf("%+v", event.Rune()))
+		switch event.Rune() {
+		case 32:
+			// spacebar
 			if GlobalPause == false {
 				GlobalPause = true
 				GlobalTicker.Stop()
-				textMap.SetTitle("Map - ПАУЗА")
+				textMap.SetTitle("Карта - ПАУЗА")
 			} else {
 				GlobalPause = false
-				GlobalTicker.Reset(refreshInterval)
-				textMap.SetTitle("Map")
+				GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+				textMap.SetTitle("Карта")
 			}
+		case 49:
+			// 1
+			GlobalSpeedFactor = 1
+			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+			SpeedStatus := fmt.Sprintf("Сжатие времени: [green]х1[white] х2 х4 х8")
+			textStatus.SetText(SpeedStatus)
+		case 50:
+			// 2
+			GlobalSpeedFactor = 2
+			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 [green]х2[white] х4 х8")
+			textStatus.SetText(SpeedStatus)
+		case 51:
+			// 3
+			GlobalSpeedFactor = 4
+			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 х2 [green]х4[white] х8")
+			textStatus.SetText(SpeedStatus)
+		case 52:
+			// 4
+			GlobalSpeedFactor = 8
+			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 х2 х4 [green]х8[white]")
+			textStatus.SetText(SpeedStatus)
 		}
 		return event
 	})
@@ -866,57 +926,59 @@ func main() {
 		SetScrollable(true).
 		SetWrap(false).
 		SetWordWrap(false).
-		SetText("Loading...")
+		SetText("Загружается...")
 
 	textMap.
 		SetBorder(true).
 		SetTitleAlign(tview.AlignLeft).
-		SetTitle("Map")
+		SetTitle("Карта")
 
 	textLog = tview.NewTextView().
 		SetScrollable(true).
 		SetWrap(true).
 		SetWordWrap(true).
 		SetMaxLines(100).
-		SetText("Loading...\n")
+		SetText("Загружается...\n")
 
 	textLog.
 		SetBorder(true).
 		SetTitleAlign(tview.AlignLeft).
-		SetTitle("Log")
+		SetTitle("Журнал")
 
 	textTown = tview.NewTextView().
 		SetScrollable(true).
 		SetWrap(true).
 		SetWordWrap(true).
-		SetText("Loading...")
+		SetText("Загружается...")
 
 	textTown.
 		SetBorder(true).
 		SetTitleAlign(tview.AlignLeft).
-		SetTitle("Towns")
+		SetTitle("Города")
 
 	textCaravan = tview.NewTextView().
 		SetScrollable(true).
 		SetWrap(true).
 		SetWordWrap(true).
-		SetText("Loading...")
+		SetText("Загружается...")
 
 	textCaravan.
 		SetBorder(true).
 		SetTitleAlign(tview.AlignLeft).
-		SetTitle("Caravan")
+		SetTitle("Караван")
+
 
 	grid := tview.NewGrid().
-		SetRows(-1, -1).
+		SetRows(-15, -15, -2).
 		SetColumns(-2, -2, -2).
 		SetMinSize(15, 20).
 		SetBorders(false)
 
 	grid.AddItem(textMap, 0, 0, 1, 2, 0, 0, false).
-		AddItem(textLog, 0, 2, 2, 1, 0, 0, false).
+		AddItem(textLog, 0, 2, 3, 1, 0, 0, false).
 		AddItem(textTown, 1, 0, 1, 1, 0, 0, false).
-		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false)
+		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false).
+		AddItem(textStatus, 2, 0, 1, 2, 0, 0, false)
 
 	//os.Exit(0)
 
@@ -927,7 +989,7 @@ func main() {
 	MaxTownsCount = 26*/
 
 	log.Println("Create global map")
-	GlobalMap = MapDef{Width: MapSize * 2, Height: MapSize}
+	GlobalMap = MapTemplate{Width: MapSize * MapWidthFactor, Height: MapSize}
 
 	log.Println("Create bitmap")
 	bitMap := MakeBitMap(GlobalMap.Width, GlobalMap.Height)
