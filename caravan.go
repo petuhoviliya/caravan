@@ -1,4 +1,4 @@
-package main
+package caravan
 
 import (
 	"fmt"
@@ -158,9 +158,19 @@ type CaravanTemplate struct {
 
 func NewCaravan() {}
 
-func (c *CaravanTemplate) MoveTo(X int, Y int) {
+func (c *CaravanTemplate) Move(X int, Y int) {}
 
-}
+func (c *CaravanTemplate) MoveBest(X int, Y int) {}
+
+func (c *CaravanTemplate) ChooseDestination() {}
+
+func (c *CaravanTemplate) CargoCapacity() {}
+
+func (c *CaravanTemplate) Sell(TownId int, CargoId int) {}
+
+func (c *CaravanTemplate) Buy(TownId int, CargoId int) {}
+
+
 
 type TownConfigTemplate struct {
 	WarehouseLimit float64
@@ -230,6 +240,7 @@ var (
 	TownConfig map[int]TownConfigTemplate
 	Caravan CaravanTemplate
 
+	Tui *tview.Application
 	app         *tview.Application
 	textMap     *tview.TextView
 	textLog     *tview.TextView
@@ -835,6 +846,24 @@ func GlobalTick() {
 	}
 }
 
+func SetGameSpeed(SpeedFactor int) {
+	GlobalSpeedFactor = SpeedFactor
+	GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", GlobalSpeedFactor)
+	textStatus.SetText(SpeedStatus)
+}
+
+func ToggleGamePause() {
+	if GlobalPause == false {
+		GlobalPause = true
+		GlobalTicker.Stop()
+		textMap.SetTitle("Карта - ПАУЗА")
+	} else {
+		GlobalPause = false
+		GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+		textMap.SetTitle("Карта")
+	}
+}
 
 
 func init() {
@@ -945,39 +974,19 @@ func main() {
 		switch event.Rune() {
 		case 32:
 			// spacebar
-			if GlobalPause == false {
-				GlobalPause = true
-				GlobalTicker.Stop()
-				textMap.SetTitle("Карта - ПАУЗА")
-			} else {
-				GlobalPause = false
-				GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
-				textMap.SetTitle("Карта")
-			}
+			ToggleGamePause()
 		case 49:
 			// 1
-			GlobalSpeedFactor = 1
-			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
-			SpeedStatus := fmt.Sprintf("Сжатие времени: [green]х1[white] х2 х4 х8")
-			textStatus.SetText(SpeedStatus)
+			SetGameSpeed(1)
 		case 50:
 			// 2
-			GlobalSpeedFactor = 2
-			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
-			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 [green]х2[white] х4 х8")
-			textStatus.SetText(SpeedStatus)
+			SetGameSpeed(2)
 		case 51:
 			// 3
-			GlobalSpeedFactor = 4
-			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
-			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 х2 [green]х4[white] х8")
-			textStatus.SetText(SpeedStatus)
+			SetGameSpeed(4)
 		case 52:
 			// 4
-			GlobalSpeedFactor = 8
-			GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
-			SpeedStatus := fmt.Sprintf("Сжатие времени: х1 х2 х4 [green]х8[white]")
-			textStatus.SetText(SpeedStatus)
+			SetGameSpeed(8)
 		}
 		return event
 	})
@@ -1041,7 +1050,6 @@ func main() {
 		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false).
 		AddItem(textStatus, 2, 0, 1, 2, 0, 0, false)
 
-	//os.Exit(0)
 
 	log.Println("Create global map")
 	GlobalMap = NewMap(60,15)
