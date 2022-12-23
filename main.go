@@ -21,9 +21,9 @@ const CaravanStatusStarting uint8 = 255
 type money int64
 
 type GameTemplate struct {
-	Pause	bool
-	Step	int
-	Ticker	*time.Ticker
+	Pause      bool
+	Step       int
+	Ticker     *time.Ticker
 	TimeFactor time.Duration
 
 	Tui     tview.Application
@@ -242,21 +242,20 @@ type WareGood struct {
 }
 
 var (
-	Game	GameTemplate
+	Game GameTemplate
 
-	GlobalMap         *MapTemplate
-	GlobalPause       bool
-	GlobalTicker      *time.Ticker
-	GlobalSpeedFactor time.Duration
-	GlobalStep        int
-	TotalVisited      int
+	GlobalMap    *MapTemplate
+	GlobalPause  bool
+	GlobalTicker *time.Ticker
+	GlobalStep   int
+	TotalVisited int
 
-	Towns		map[int]TownTemplate
+	Towns      map[int]TownTemplate
 	Goods      map[int]TradingGood
 	TownConfig map[int]TownConfigTemplate
-	Caravan	CaravanTemplate
+	Caravan    CaravanTemplate
 
-	Tui					*tview.Application
+	Tui *tview.Application
 	//app         *tview.Application
 	textMap     *tview.TextView
 	textLog     *tview.TextView
@@ -859,8 +858,8 @@ func GlobalTick() {
 
 func SetGameSpeed(TimeFactor time.Duration) {
 	Game.TimeFactor = TimeFactor
-	GlobalTicker.Reset(TickerInterval / GlobalSpeedFactor)
-	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", GlobalSpeedFactor)
+	GlobalTicker.Reset(TickerInterval / Game.TimeFactor)
+	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", Game.TimeFactor)
 	textStatus.SetText(SpeedStatus)
 }
 
@@ -871,7 +870,7 @@ func ToggleGamePause() {
 		textMap.SetTitle("Карта - ПАУЗА")
 	} else {
 		GlobalPause = false
-		GlobalTicker.Reset(TickerInterval / GlobalSpeedFactor)
+		GlobalTicker.Reset(TickerInterval / Game.TimeFactor)
 		textMap.SetTitle("Карта")
 	}
 }
@@ -893,22 +892,18 @@ func InitGame() {
 func InitInterface() {
 	/*
 
-	*/
+	 */
 }
 
 func init() {
 
 	log.Println("Init")
 
-	Game = GameTemplate {
-		Pause: false,
-		Step: 0,
-		TimeFactor: 1,
+	Game = GameTemplate{
+		Pause:      false,
+		Step:       0,
+		TimeFactor: 1, // 1, 2, 4, 8
 	}
-
-
-	// 1, 2, 4, 8
-	GlobalSpeedFactor = 1
 
 	AlphabetRU = []string{
 		"Амурск", "Биробиджан", "Владивосток", "Грозный",
