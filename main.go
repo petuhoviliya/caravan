@@ -1,4 +1,4 @@
-package caravan
+package main
 
 import (
 	"fmt"
@@ -18,6 +18,14 @@ const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
 
 type money int64
+
+
+type GameTemplate struct {
+	Tui tview.Application
+	Map MapTemplate
+	Towns []TownTemplate
+	Caravan CaravanTemplate
+}
 
 type MapTemplate struct {
 	Width  int
@@ -243,6 +251,7 @@ var (
 	textLog     *tview.TextView
 	textTown    *tview.TextView
 	textCaravan *tview.TextView
+	textStatus  *tview.TextView
 
 	AlphabetRU []string
 )
@@ -381,7 +390,7 @@ func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance
 			Wares[key] = WareGood{key, float64(Rnd(50))}
 		}
 		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
-		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, TownBaseWarehouseLimit, Wares, 0}
+		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, 500, Wares, 0}
 	}
 
 
@@ -843,7 +852,7 @@ func GlobalTick() {
 	}
 }
 
-func SetGameSpeed(SpeedFactor int) {
+func SetGameSpeed(SpeedFactor time.Duration) {
 	GlobalSpeedFactor = SpeedFactor
 	GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
 	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", GlobalSpeedFactor)
@@ -862,7 +871,7 @@ func ToggleGamePause() {
 	}
 }
 
-func StartNewGame() {
+func InitGame() {
 	/*
 	Порядок действий
 
@@ -977,7 +986,7 @@ func main() {
 
 	app = tview.NewApplication()
 
-	textStatus := tview.NewTextView().
+	textStatus = tview.NewTextView().
 		SetDynamicColors(true).
 		SetText(fmt.Sprintf("Сжатие времени: [green]х1[white] х2 х4 х8"))
 
@@ -1073,7 +1082,7 @@ func main() {
 	GlobalMap = NewMap(60,15)
 
 	log.Println("Put towns on map")
-	Towns = PutTownsOnMap(GlobalMap, &bitMap, MapMaxTownsCount, MapMinDistance)
+	Towns = PutTownsOnMap(GlobalMap, &bitMap, 28, 5)
 
 	log.Println("Generate Caravan")
 	Caravan = CaravanTemplate{
@@ -1083,7 +1092,7 @@ func main() {
 		Y:           1,
 		Money:       1000,
 		CapacityMax: 100.0,
-		TradeConfig: {
+		TradeConfig: TradeConfig{
 			BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= BuyMaxPrice * (PriceMin + (PriceMax - PriceMin))
 			BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax, если получится, то покупается несколько видов товаров
 			BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем BuyMaxAmount * CapacityMax
@@ -1101,7 +1110,7 @@ func main() {
 
 	//	os.Exit(0)
 
-	StartNewGame()
+	InitGame()
 
 	go GlobalTick()
 
