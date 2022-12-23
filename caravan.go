@@ -17,11 +17,6 @@ const CaravanStatusMoving uint8 = 1
 const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
 
-const TownBaseWarehouseLimit = 500.0
-
-const MapMinDistance = 5
-const MapMaxTownsCount = 26
-
 type money int64
 
 type MapTemplate struct {
@@ -103,6 +98,8 @@ func (m *MapTemplate) PlaceTown(X int, Y int, Radius int) bool{
 
 	return true
 }
+
+func (m *MapTemplate) GetPrintableMap() string { return "" }
 
 
 type Cargo struct {
@@ -865,6 +862,27 @@ func ToggleGamePause() {
 	}
 }
 
+func StartNewGame() {
+	/*
+	Порядок действий
+
+	0. Генерируем карту
+	1. Генерируем города
+		1.1 Распологаем города на карте
+	2. Генерируем караван
+	3. Запускаем гланый цикл
+
+	*/
+
+}
+
+func InitInterface() {
+	/*
+
+	*/
+}
+
+
 
 func init() {
 
@@ -897,10 +915,10 @@ func init() {
 	
 	// Конфигурация города в зависимости от уровня (TownTemplate.Tier)
 	TownConfig = map[int]TownConfigTemplate{
-		//						WarehouseLimit, ColorTag
-		1: TownConfigTemplate{500.0, "[red]"},
-		2: TownConfigTemplate{1000.0, "[orange]"},
-		3: TownConfigTemplate{2000.0, "[green]"},
+		//	WarehouseLimit, ColorTag
+		1: {500.0, 	"[red]"},
+		2: {1000.0, "[orange]"},
+		3: {2000.0, "[green]"},
 	}
 
 	/*
@@ -1066,12 +1084,12 @@ func main() {
 		Money:       1000,
 		CapacityMax: 100.0,
 		TradeConfig: {
-			BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= 0.25 * (PriceMin + (PriceMax - PriceMin))
-			BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax
-			BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем 0.50 * CapacityMax
-			BuyMinAmount:    0.10, // Минимальное кол-во для покупки 0.10 * CapacityMax
+			BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= BuyMaxPrice * (PriceMin + (PriceMax - PriceMin))
+			BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax, если получится, то покупается несколько видов товаров
+			BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем BuyMaxAmount * CapacityMax
+			BuyMinAmount:    0.10, // Минимальное кол-во для покупки BuyMinAmount * CapacityMax
 			SellWithProfit:  true, // Всегда продавать по цене большей чем цена покупки
-			SellMinPrice:    0.50, // Если SellWithProfit == false, то продавать если Цена >= 0.50 * (PriceMin + (PriceMax - PriceMin))
+			SellMinPrice:    0.50, // Если SellWithProfit == false, то продавать если Цена >= SellMinPrice * (PriceMin + (PriceMax - PriceMin))
 		},
 	}
 
@@ -1082,6 +1100,8 @@ func main() {
 	//fmt.Printf("%+v\n",GlobalMap)
 
 	//	os.Exit(0)
+
+	StartNewGame()
 
 	go GlobalTick()
 
