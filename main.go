@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -19,13 +20,23 @@ const CaravanStatusStarting uint8 = 255
 
 type money int64
 
-
 type GameTemplate struct {
-	Tui tview.Application
-	Map MapTemplate
-	Towns []TownTemplate
+	Pause	bool
+	Step	int
+	Ticker	*time.Ticker
+	TimeFactor time.Duration
+
+	Tui     tview.Application
+	Map     MapTemplate
+	Towns   []TownTemplate
 	Caravan CaravanTemplate
 }
+
+func (g *GameTemplate) PrintableMap() string {
+	return ""
+}
+
+func (g *GameTemplate) GenerateTowns() {}
 
 type MapTemplate struct {
 	Width  int
@@ -33,8 +44,8 @@ type MapTemplate struct {
 	BitMap []byte
 }
 
-func NewMap(w int, h int) *MapTemplate {
-	
+func NewMap(w, h int) *MapTemplate {
+
 	Map := MapTemplate{Width: w, Height: h}
 	Map.MakeBitmap()
 
@@ -51,8 +62,8 @@ func (m *MapTemplate) GetPosition(Index int) (int, int) {
 	return X, Y
 }
 
-func (m *MapTemplate) GetIndex(X int, Y int) int {
-	return Y * m.Width + X
+func (m *MapTemplate) GetIndex(X, Y int) int {
+	return Y*m.Width + X
 }
 
 func (m *MapTemplate) MakeBitmap() {
@@ -72,14 +83,15 @@ func (m *MapTemplate) GetFreeCells() []int {
 	return free
 }
 
-func (m *MapTemplate) PlaceTown(X int, Y int, Radius int) bool{
+func (m *MapTemplate) PlaceTown(X, Y, Radius int) bool {
 
 	for i := -Radius; i <= Radius; i++ {
 		for j := -Radius; j <= Radius; j++ {
 
-			A := float64(i)
-			B := float64(j)
-			C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
+			//A := float64(i)
+			//B := float64(j)
+			//C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
+			C := int(math.Hypot(float64(i), float64(i)))
 
 			tX := X + i
 			tY := Y + j
@@ -98,7 +110,7 @@ func (m *MapTemplate) PlaceTown(X int, Y int, Radius int) bool{
 				if tY < 0 {
 					tY = 0
 				}
-				
+
 				m.BitMap[m.GetIndex(tX, tY)] = 1
 			}
 		} // for j
@@ -108,7 +120,6 @@ func (m *MapTemplate) PlaceTown(X int, Y int, Radius int) bool{
 }
 
 func (m *MapTemplate) GetPrintableMap() string { return "" }
-
 
 type Cargo struct {
 	WareId   int
@@ -163,23 +174,21 @@ type CaravanTemplate struct {
 
 func NewCaravan() {}
 
-func (c *CaravanTemplate) Move(X int, Y int) {}
+func (c *CaravanTemplate) Move(X, Y int) {}
 
-func (c *CaravanTemplate) MoveBest(X int, Y int) {}
+func (c *CaravanTemplate) MoveBest(X, Y int) {}
 
 func (c *CaravanTemplate) ChooseDestination() {}
 
 func (c *CaravanTemplate) CargoCapacity() {}
 
-func (c *CaravanTemplate) Sell(TownId int, CargoId int) {}
+func (c *CaravanTemplate) Sell(TownId, CargoId int) {}
 
-func (c *CaravanTemplate) Buy(TownId int, CargoId int) {}
-
-
+func (c *CaravanTemplate) Buy(TownId, CargoId int) {}
 
 type TownConfigTemplate struct {
 	WarehouseLimit float64
-	ColorTag string
+	ColorTag       string
 }
 
 type TownTemplate struct {
@@ -193,13 +202,13 @@ type TownTemplate struct {
 	Visited        int
 }
 
-func NewTown(Id int, Name string, Tier int, X int, Y int) *TownTemplate {
+func NewTown(Id int, Name string, Tier, X, Y int) *TownTemplate {
 	Town := TownTemplate{
-		Id: Id,
+		Id:   Id,
 		Name: Name,
 		Tier: Tier,
-		X: X,
-		Y: Y,
+		X:    X,
+		Y:    Y,
 	}
 	return &Town
 }
@@ -233,20 +242,22 @@ type WareGood struct {
 }
 
 var (
-	GlobalMap    *MapTemplate
-	GlobalPause  bool
-	GlobalTicker *time.Ticker
+	Game	GameTemplate
+
+	GlobalMap         *MapTemplate
+	GlobalPause       bool
+	GlobalTicker      *time.Ticker
 	GlobalSpeedFactor time.Duration
-	GlobalStep   int
-	TotalVisited int
+	GlobalStep        int
+	TotalVisited      int
 
-	Goods   map[int]TradingGood
-	Towns   map[int]TownTemplate
+	Towns		map[int]TownTemplate
+	Goods      map[int]TradingGood
 	TownConfig map[int]TownConfigTemplate
-	Caravan CaravanTemplate
+	Caravan	CaravanTemplate
 
-	Tui *tview.Application
-	app         *tview.Application
+	Tui					*tview.Application
+	//app         *tview.Application
 	textMap     *tview.TextView
 	textLog     *tview.TextView
 	textTown    *tview.TextView
@@ -258,7 +269,7 @@ var (
 
 func RndRange(Min int, Max int) int {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(Max-Min+1)+Min
+	return rand.Intn(Max-Min+1) + Min
 }
 
 func Rnd(Max int) int {
@@ -331,7 +342,6 @@ func PrintMap(Map MapTemplate, Towns map[int]TownTemplate, Caravan CaravanTempla
 	return PrintableMap
 }
 
-
 func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
 
 	modX := Caravan.X - DestX
@@ -350,7 +360,6 @@ func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
 	}
 }
 
-
 func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
 
 	var Towns map[int]TownTemplate
@@ -359,10 +368,9 @@ func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance
 	var MaxTier3 int
 	var Tier2 int = 1
 	var Tier3 int = 1
-	
+
 	Wares = make(map[int]WareGood)
 	Towns = make(map[int]TownTemplate)
-
 
 	if TownCount > len(AlphabetRU) {
 		TownCount = len(AlphabetRU)
@@ -392,7 +400,6 @@ func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance
 		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
 		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, 500, Wares, 0}
 	}
-
 
 	for {
 		//break
@@ -434,14 +441,12 @@ func PointInsideRadius(X int, Y int, Radius int) bool {
 	B := math.Abs(float64(0 - Y))
 	C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
 
-
 	//if int(math.Hypot(float64(X),float64(Y))) <= Radius {
 	if C <= Radius {
 		return true
 	}
 	return false
 }
-
 
 func PutTownOnBitMap(Map MapTemplate, BitMap *[][]byte, TownX int, TownY int, Distance int) {
 
@@ -833,7 +838,7 @@ func GlobalActions() {
 }
 
 func GlobalTick() {
-	GlobalTicker = time.NewTicker(TickerInterval/GlobalSpeedFactor)
+	Game.Ticker = time.NewTicker(TickerInterval / Game.TimeFactor)
 
 	for {
 		select {
@@ -842,7 +847,7 @@ func GlobalTick() {
 
 			GlobalStep++
 
-			app.QueueUpdateDraw(func() {
+			Tui.QueueUpdateDraw(func() {
 
 				// Выполнить все действия
 				GlobalActions()
@@ -852,9 +857,9 @@ func GlobalTick() {
 	}
 }
 
-func SetGameSpeed(SpeedFactor time.Duration) {
-	GlobalSpeedFactor = SpeedFactor
-	GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+func SetGameSpeed(TimeFactor time.Duration) {
+	Game.TimeFactor = TimeFactor
+	GlobalTicker.Reset(TickerInterval / GlobalSpeedFactor)
 	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", GlobalSpeedFactor)
 	textStatus.SetText(SpeedStatus)
 }
@@ -866,20 +871,20 @@ func ToggleGamePause() {
 		textMap.SetTitle("Карта - ПАУЗА")
 	} else {
 		GlobalPause = false
-		GlobalTicker.Reset(TickerInterval/GlobalSpeedFactor)
+		GlobalTicker.Reset(TickerInterval / GlobalSpeedFactor)
 		textMap.SetTitle("Карта")
 	}
 }
 
 func InitGame() {
 	/*
-	Порядок действий
+		Порядок действий
 
-	0. Генерируем карту
-	1. Генерируем города
-		1.1 Распологаем города на карте
-	2. Генерируем караван
-	3. Запускаем гланый цикл
+		0. Генерируем карту
+		1. Генерируем города
+			1.1 Распологаем города на карте
+		2. Генерируем караван
+		3. Запускаем гланый цикл
 
 	*/
 
@@ -891,19 +896,23 @@ func InitInterface() {
 	*/
 }
 
-
-
 func init() {
 
 	log.Println("Init")
 
+	Game = GameTemplate {
+		Pause: false,
+		Step: 0,
+		TimeFactor: 1,
+	}
+
+
 	// 1, 2, 4, 8
 	GlobalSpeedFactor = 1
 
-
 	AlphabetRU = []string{
 		"Амурск", "Биробиджан", "Владивосток", "Грозный",
-		"Дубна", "Ейск", "Жуковский",	"Зеленоград",
+		"Дубна", "Ейск", "Жуковский", "Зеленоград",
 		"Иркутск", "Казань", "Липецк", "Мурманск",
 		"Ноглики", "Омск", "Партизанск", "Рязань",
 		"Смоленск", "Томск", "Уссурийск", "Феодосия",
@@ -921,11 +930,11 @@ func init() {
 	  UnitVolume float64
 	  UnitWeight float64
 	*/
-	
+
 	// Конфигурация города в зависимости от уровня (TownTemplate.Tier)
 	TownConfig = map[int]TownConfigTemplate{
 		//	WarehouseLimit, ColorTag
-		1: {500.0, 	"[red]"},
+		1: {500.0, "[red]"},
 		2: {1000.0, "[orange]"},
 		3: {2000.0, "[green]"},
 	}
@@ -945,10 +954,10 @@ func init() {
 
 	Goods = map[int]TradingGood{
 		// Id		Tier	Name 			PriceMin	PriceMax	Unit				Volume	Weight	Resources	Consumables
-		1: {1, 	1, 		"Зерно", 	2, 				10, 			"мешок", 		0.036, 	0.050, 	nil, 			nil},
-		2: {2, 	1, 		"Дерево",	5, 				20, 			"кубометр",	1.0, 		0.640, 	nil, 			nil},
-		3: {3, 	1, 		"Камень", 4, 				18, 			"кубометр",	1.0, 		1.7, 		nil, 			nil},
-		4: {4, 	1, 		"Руда", 	9, 				30, 			"тонна", 		0.5, 		1.0, 		nil, 			nil},
+		1: {1, 1, "Зерно", 2, 10, "мешок", 0.036, 0.050, nil, nil},
+		2: {2, 1, "Дерево", 5, 20, "кубометр", 1.0, 0.640, nil, nil},
+		3: {3, 1, "Камень", 4, 18, "кубометр", 1.0, 1.7, nil, nil},
+		4: {4, 1, "Руда", 9, 30, "тонна", 0.5, 1.0, nil, nil},
 	}
 	/*{Id: 5, Tier: 2, Name: "Мука", PriceMin: 40, PriceMax: 75, SellingUnit: "мешок", UnitVolume: 0.036, UnitWeight: 0.050,
 		Resources: []Resources{
@@ -984,7 +993,7 @@ func init() {
 
 func main() {
 
-	app = tview.NewApplication()
+	Tui = tview.NewApplication()
 
 	textStatus = tview.NewTextView().
 		SetDynamicColors(true).
@@ -995,8 +1004,7 @@ func main() {
 		SetTitleAlign(tview.AlignLeft).
 		SetTitle("Статус")
 
-
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	Tui.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		//textStatus.SetText(fmt.Sprintf("%+v", event.Rune()))
 		switch event.Rune() {
 		case 32:
@@ -1064,7 +1072,6 @@ func main() {
 		SetTitleAlign(tview.AlignLeft).
 		SetTitle("Караван")
 
-
 	grid := tview.NewGrid().
 		SetRows(-15, -15, -2).
 		SetColumns(-2, -2, -2).
@@ -1077,9 +1084,8 @@ func main() {
 		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false).
 		AddItem(textStatus, 2, 0, 1, 2, 0, 0, false)
 
-
 	log.Println("Create global map")
-	GlobalMap = NewMap(60,15)
+	GlobalMap = NewMap(60, 15)
 
 	log.Println("Put towns on map")
 	Towns = PutTownsOnMap(GlobalMap, &bitMap, 28, 5)
@@ -1114,17 +1120,15 @@ func main() {
 
 	go GlobalTick()
 
-	if err := app.SetRoot(grid, true).SetFocus(grid).Run(); err != nil {
+	if err := Tui.SetRoot(grid, true).SetFocus(grid).Run(); err != nil {
 		panic(err)
 	}
 
 	os.Exit(0)
 
-
 }
 
-
-	/*ttMap := NewMap(60, 15)
+/*ttMap := NewMap(60, 15)
 
 	/*for i := 0; i < ttMap.Size(); i++ {
 		ttX, ttY := ttMap.GetPosition(i)
@@ -1160,10 +1164,10 @@ func main() {
 	nextFreeCell :=  ttMap.GetFreeCells()[index]
 
 	ttX, ttY := ttMap.GetPosition(nextFreeCell)
-	
+
 	fmt.Printf("Pos: %d:%d\n", ttX, ttY)
 
-	
+
 	// ----
 	ttMap.PlaceTown(ttX, ttY, 5)
 
@@ -1178,7 +1182,7 @@ func main() {
 	fmt.Printf("FreeCelss: %+v\n", ttMap.GetFreeCells())
 
 	fmt.Printf("Free cells count: %v\n", len(ttMap.GetFreeCells()))
-	
+
 	//os.Exit(0)
 
 	for i:=1; i <= len(AlphabetRU); i++ {
@@ -1227,26 +1231,24 @@ func main() {
 	fmt.Println(len(ttTowns))
 
 	os.Exit(0)
-	*/
-
+*/
 
 /*	Alphabet = []string{
-		"Alpha", "Bravo", "Charlie", "Delta",
-		"Echo", "Foxtrot", "Golf", "Hotel",
-		"India", "Juliet", "Kilo", "Lima",
-		"Mike", "November", "Oscar", "Papa",
-		"Quebec", "Romeo", "Sierra", "Tango",
-		"Uniform", "Victor", "Whiskey", "X-ray",
-		"Yankee", "Zulu",
-	}*/
+	"Alpha", "Bravo", "Charlie", "Delta",
+	"Echo", "Foxtrot", "Golf", "Hotel",
+	"India", "Juliet", "Kilo", "Lima",
+	"Mike", "November", "Oscar", "Papa",
+	"Quebec", "Romeo", "Sierra", "Tango",
+	"Uniform", "Victor", "Whiskey", "X-ray",
+	"Yankee", "Zulu",
+}*/
 
 /*	AlphabetRU = []string{
-		"Анна", "Борис", "Василий", "Григорий",
-		"Дмитрий", "Елена", "Ёлка", "Женя",
-		"Зинаида", "Иван", "Константин", "Леонид",
-		"Михаил", "Николай", "Ольга", "Павел",
-		"Роман", "Семен", "Татьяна", "Ульяна",
-		"Федор", "Харитон", "Цапля", "Человек",
-		"Шура", "Щука", "Эхо", "Юрий", "Яков",
-	}*/
-
+	"Анна", "Борис", "Василий", "Григорий",
+	"Дмитрий", "Елена", "Ёлка", "Женя",
+	"Зинаида", "Иван", "Константин", "Леонид",
+	"Михаил", "Николай", "Ольга", "Павел",
+	"Роман", "Семен", "Татьяна", "Ульяна",
+	"Федор", "Харитон", "Цапля", "Человек",
+	"Шура", "Щука", "Эхо", "Юрий", "Яков",
+}*/
