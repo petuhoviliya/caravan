@@ -44,12 +44,11 @@ type MapTemplate struct {
 	BitMap []byte
 }
 
-func NewMap(w, h int) *MapTemplate {
+func (g *GameTemplate) NewMap(w, h int) {
 
-	Map := MapTemplate{Width: w, Height: h}
-	Map.MakeBitmap()
+	g.Map = MapTemplate{Width: w, Height: h}
+	g.Map.MakeBitmap()
 
-	return &Map
 }
 
 func (m *MapTemplate) Size() int {
@@ -389,7 +388,7 @@ func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance
 		//fmt.Printf("Free: %d\n", len(FreeCells))
 
 		NextFreeCell := RndRange(0, len(FreeCells)-1)
-		PutTownOnBitMap(Map, &(*BitMap), FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, MinDistance)
+		PutTownOnBitMap(Map, BitMap, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, MinDistance)
 
 		Wares = make(map[int]WareGood)
 
@@ -441,10 +440,7 @@ func PointInsideRadius(X int, Y int, Radius int) bool {
 	C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
 
 	//if int(math.Hypot(float64(X),float64(Y))) <= Radius {
-	if C <= Radius {
-		return true
-	}
-	return false
+	return C <= Radius
 }
 
 func PutTownOnBitMap(Map MapTemplate, BitMap *[][]byte, TownX int, TownY int, Distance int) {
@@ -588,7 +584,6 @@ func FindPath(StartX int, StartY int, DestX int, DestY int) {
 
 	fmt.Printf("%#v\n", bitMap)
 	fmt.Printf("%d %d\n", len(bitMap), cap(bitMap))
-	return
 }
 
 func CaravanCalculateCargoCapacity(Caravan *CaravanTemplate) float64 {
@@ -660,10 +655,8 @@ func TownGetWareWithLowestPrice(Town TownTemplate) int {
 }
 
 func SellForBestPrice(Caravan *CaravanTemplate) {
-	if Caravan.Status != CaravanStatusInTown {
-		return
-	}
-	return
+	//if Caravan.Status != CaravanStatusInTown {
+	//}
 }
 
 func BuyForBestPrice(Caravan *CaravanTemplate) {
@@ -723,12 +716,11 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 
 	PrintToGameLog(TextLog)
 
-	return
 }
 
 func RedrawViewMap() {
-	textMap.SetText(PrintMap(GlobalMap, Towns, Caravan))
-	fmt.Fprintf(textMap, "Размер %dx%d Глобальный шаг: %d\n", GlobalMap.Width, GlobalMap.Height, GlobalStep)
+	//textMap.SetText(PrintMap(GlobalMap, Towns, Caravan))
+	//fmt.Fprintf(textMap, "Размер %dx%d Глобальный шаг: %d\n", GlobalMap.Width, GlobalMap.Height, GlobalStep)
 }
 
 func RedrawViewCaravan() {
@@ -798,11 +790,11 @@ func RedrawViewLog() {}
 func RedrawViewStatus() {}
 
 func RedrawScreen() {
-	RedrawViewMap()
-	RedrawViewTown()
-	RedrawViewCaravan()
-	RedrawViewLog()
-	RedrawViewStatus()
+	//RedrawViewMap()
+	//RedrawViewTown()
+	//RedrawViewCaravan()
+	//RedrawViewLog()
+	//RedrawViewStatus()
 }
 
 func PrintToGameLog(Text string) {
@@ -826,11 +818,11 @@ func GlobalActions() {
 			Перерисовать интерфейс
 	*/
 
-	CaravanMoveToTown(&Caravan)
+	//	CaravanMoveToTown(&Caravan)
 
-	SellForBestPrice(&Caravan)
+	//	SellForBestPrice(&Caravan)
 
-	BuyForBestPrice(&Caravan)
+	//	BuyForBestPrice(&Caravan)
 
 	// Перерисовать интерфейс после всех действий
 	RedrawScreen()
@@ -864,7 +856,7 @@ func SetGameSpeed(TimeFactor time.Duration) {
 }
 
 func ToggleGamePause() {
-	if GlobalPause == false {
+	if !GlobalPause {
 		GlobalPause = true
 		GlobalTicker.Stop()
 		textMap.SetTitle("Карта - ПАУЗА")
@@ -992,7 +984,7 @@ func main() {
 
 	textStatus = tview.NewTextView().
 		SetDynamicColors(true).
-		SetText(fmt.Sprintf("Сжатие времени: [green]х1[white] х2 х4 х8"))
+		SetText("Сжатие времени: [green]х1[white] х2 х4 х8")
 
 	textStatus.
 		SetBorder(true).
@@ -1079,12 +1071,6 @@ func main() {
 		AddItem(textCaravan, 1, 1, 1, 1, 0, 0, false).
 		AddItem(textStatus, 2, 0, 1, 2, 0, 0, false)
 
-	log.Println("Create global map")
-	GlobalMap = NewMap(60, 15)
-
-	log.Println("Put towns on map")
-	Towns = PutTownsOnMap(GlobalMap, &bitMap, 28, 5)
-
 	log.Println("Generate Caravan")
 	Caravan = CaravanTemplate{
 		Name:        "Караван",
@@ -1103,8 +1089,8 @@ func main() {
 		},
 	}
 
-	Caravan.Target = RndRange(1, len(Towns))
-	Caravan.PrevTarget = -1
+	//Caravan.Target = RndRange(1, len(Towns))
+	//Caravan.PrevTarget = -1
 
 	//fmt.Println(PrintMap(GlobalMap, Towns, Caravan))
 	//fmt.Printf("%+v\n",GlobalMap)
