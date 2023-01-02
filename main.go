@@ -18,6 +18,8 @@ const CaravanStatusMoving uint8 = 1
 const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
 
+const TownPlaceRadius int = 5
+
 type money int64
 
 type GameTemplate struct {
@@ -32,99 +34,69 @@ type GameTemplate struct {
 	Caravan CaravanTemplate
 }
 
-func (g *GameTemplate) PrintableMap() string {
-	return ""
-}
-
-func (g *GameTemplate) GenerateTowns() {}
-
 type MapTemplate struct {
 	Width  int
 	Height int
 	BitMap []byte
 }
 
-func (g *GameTemplate) NewMap(w, h int) {
-
-	g.Map = MapTemplate{Width: w, Height: h}
-	g.Map.MakeBitmap()
-
+type CaravanTemplate struct {
+	Name        string
+	Status      uint8
+	Money       float64
+	X           int
+	Y           int
+	Target      int
+	PrevTarget  int
+	CapacityMax float64
+	Cargo       []Cargo
+	TradeConfig TradeConfig
 }
-
-func (m *MapTemplate) Size() int {
-	return m.Width * m.Height
-}
-
-func (m *MapTemplate) GetPosition(Index int) (int, int) {
-	X := Index % m.Width
-	Y := (Index - X) / m.Width
-	return X, Y
-}
-
-func (m *MapTemplate) GetIndex(X, Y int) int {
-	return Y*m.Width + X
-}
-
-func (m *MapTemplate) MakeBitmap() {
-	m.BitMap = make([]byte, m.Size())
-}
-
-func (m *MapTemplate) GetFreeCells() []int {
-
-	var free []int
-
-	for index, value := range m.BitMap {
-		if value == 0 {
-			free = append(free, index)
-		}
-	}
-
-	return free
-}
-
-func (m *MapTemplate) PlaceTown(X, Y, Radius int) bool {
-
-	for i := -Radius; i <= Radius; i++ {
-		for j := -Radius; j <= Radius; j++ {
-
-			//A := float64(i)
-			//B := float64(j)
-			//C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
-			C := int(math.Hypot(float64(i), float64(i)))
-
-			tX := X + i
-			tY := Y + j
-
-			if C <= Radius {
-
-				if tX > (m.Width - 1) {
-					tX = (m.Width - 1)
-				}
-				if tY > (m.Height - 1) {
-					tY = (m.Height - 1)
-				}
-				if tX < 0 {
-					tX = 0
-				}
-				if tY < 0 {
-					tY = 0
-				}
-
-				m.BitMap[m.GetIndex(tX, tY)] = 1
-			}
-		} // for j
-	} // for i
-
-	return true
-}
-
-func (m *MapTemplate) GetPrintableMap() string { return "" }
 
 type Cargo struct {
 	WareId   int
 	TownId   int
 	Quantity float64
 	BuyPrice float64
+}
+
+type TownTemplate struct {
+	Id             int
+	Name           string
+	Tier           int
+	X              int
+	Y              int
+	WarehouseLimit float64
+	Wares          map[int]WareGood
+	Visited        int
+}
+
+type Resources struct {
+	Id              int
+	RequiredPerUnit int
+}
+
+type TradingGood struct {
+	Id          int
+	Tier        int
+	Name        string
+	PriceMin    float64
+	PriceMax    float64
+	Unit        string
+	UnitVolume  float64
+	UnitWeight  float64
+	Resources   []Resources
+	Consumables []Resources
+}
+
+type WareGood struct {
+	Id       int
+	Quantity float64
+}
+
+type TownConfigTemplate struct {
+	WarehouseLimit float64
+	ColorTag       string
 }
 
 type TradeConfig struct {
@@ -158,95 +130,9 @@ type TradeConfig struct {
 	SellMinPrice float64
 }
 
-type CaravanTemplate struct {
-	Name        string
-	Status      uint8
-	Money       float64
-	X           int
-	Y           int
-	Target      int
-	PrevTarget  int
-	CapacityMax float64
-	Cargo       []Cargo
-	TradeConfig TradeConfig
-}
-
-func NewCaravan() {}
-
-func (c *CaravanTemplate) Move(X, Y int) {}
-
-func (c *CaravanTemplate) MoveBest(X, Y int) {}
-
-func (c *CaravanTemplate) ChooseDestination() {}
-
-func (c *CaravanTemplate) CargoCapacity() {}
-
-func (c *CaravanTemplate) Sell(TownId, CargoId int) {}
-
-func (c *CaravanTemplate) Buy(TownId, CargoId int) {}
-
-type TownConfigTemplate struct {
-	WarehouseLimit float64
-	ColorTag       string
-}
-
-type TownTemplate struct {
-	Id             int
-	Name           string
-	Tier           int
-	X              int
-	Y              int
-	WarehouseLimit float64
-	Wares          map[int]WareGood
-	Visited        int
-}
-
-func NewTown(Id int, Name string, Tier, X, Y int) *TownTemplate {
-	Town := TownTemplate{
-		Id:   Id,
-		Name: Name,
-		Tier: Tier,
-		X:    X,
-		Y:    Y,
-	}
-	return &Town
-}
-
-type FreeCell struct {
-	X int
-	Y int
-}
-
-type Resources struct {
-	Id              int
-	RequiredPerUnit int
-}
-
-type TradingGood struct {
-	Id          int
-	Tier        int
-	Name        string
-	PriceMin    float64
-	PriceMax    float64
-	Unit        string
-	UnitVolume  float64
-	UnitWeight  float64
-	Resources   []Resources
-	Consumables []Resources
-}
-
-type WareGood struct {
-	Id       int
-	Quantity float64
-}
-
 var (
 	Game GameTemplate
 
-	GlobalMap    *MapTemplate
-	GlobalPause  bool
-	GlobalTicker *time.Ticker
-	GlobalStep   int
 	TotalVisited int
 
 	Towns      map[int]TownTemplate
@@ -254,8 +140,7 @@ var (
 	TownConfig map[int]TownConfigTemplate
 	Caravan    CaravanTemplate
 
-	Tui *tview.Application
-	//app         *tview.Application
+	Tui         *tview.Application
 	textMap     *tview.TextView
 	textLog     *tview.TextView
 	textTown    *tview.TextView
@@ -265,70 +150,92 @@ var (
 	AlphabetRU []string
 )
 
-func RndRange(Min int, Max int) int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(Max-Min+1) + Min
+/**
+GameTemplate функции
+*/
+
+func (g *GameTemplate) GenerateTowns() {
+
+	for key, value := range AlphabetRU {
+
+		if len(g.Map.GetFreeCells()) == 0 {
+			break
+		}
+
+		g.Towns = append(g.Towns, Game.NewTown(key, value))
+	}
 }
 
-func Rnd(Max int) int {
-	return RndRange(1, Max)
+func (g *GameTemplate) NewTown(Id int, Name string) TownTemplate {
+
+	X, Y := g.Map.FreeCell()
+	g.Map.PlaceTown(X, Y, TownPlaceRadius)
+
+	return TownTemplate{Id, Name, 1, X, Y, 500, nil, 0}
 }
 
-func PrintMap(Map MapTemplate, Towns map[int]TownTemplate, Caravan CaravanTemplate) string {
+func (g *GameTemplate) NewMap(W, H int) {
+
+	g.Map = MapTemplate{Width: W, Height: H}
+	g.Map.MakeBitmap()
+
+}
+
+func (g *GameTemplate) PrintableMap() string {
 	// ╗ ╝ ╚ ╔ ╩ ╦ ╠ ═ ║ ╬ ╣ - borders
 	// │ ┤ ┐ └ ┴ ┬ ├ ─ ┼ ┘ ┌ - roads
 	// @ - caravan
 
 	var PrintableMap string
-	var ColorTag string
+	//var ColorTag string
 
-	for posX := 0; posX <= Map.Height+1; posX++ {
-		for posY := 0; posY <= Map.Width+1; posY++ {
+	for posY := -1; posY <= g.Map.Height; posY++ {
+		for posX := -1; posX <= g.Map.Width; posX++ {
 
 			//fmt.Printf("X:%d, Y:%d\n", posX, posY)
 
-			if posY == 0 {
-				if posX == 0 { // left upper corner
+			if posY == -1 {
+				if posX == -1 { // левый верхний угол
 					PrintableMap = PrintableMap + "╔"
-				} else if posX == (Map.Height + 1) { // left bottom corner
-					PrintableMap = PrintableMap + "╚"
-				} else {
-					PrintableMap = PrintableMap + "║" // left border
-				}
-
-			} else if posY == (Map.Width + 1) {
-				if posX == 0 { // right upper corner
+				} else if posX == (g.Map.Width) { // правый верхний угол
 					PrintableMap = PrintableMap + "╗\n"
-				} else if posX == (Map.Height + 1) { // right  bottom corner
+				} else {
+					PrintableMap = PrintableMap + "═" // верхний край
+				}
+			} else if posY == (g.Map.Height) {
+				if posX == -1 { // левый нижний угол
+					PrintableMap = PrintableMap + "╚"
+				} else if posX == (g.Map.Width) { // правый нижний угол
 					PrintableMap = PrintableMap + "╝\n"
 				} else {
-					PrintableMap = PrintableMap + "║\n" // right border
-				}
-
-			} else {
-				if posX == (Map.Height+1) || posX == 0 { // up and bottom border
 					PrintableMap = PrintableMap + "═"
-				} else { // fill space inside map borders and place towns
+				}
+			} else {
+				if posX == (g.Map.Width) {
+					PrintableMap = PrintableMap + "║\n"
+				} else if posX == -1 {
+					PrintableMap = PrintableMap + "║"
+				} else {
 
 					var mapObject string = " "
-					for _, town := range Towns {
+					for _, town := range g.Towns {
 						if town.X == posX && town.Y == posY {
-							switch Tier := town.Tier; Tier {
-							case 1:
-								ColorTag = "red"
-							case 2:
-								ColorTag = "orange"
-							case 3:
-								ColorTag = "green"
-							default:
-								ColorTag = "white"
-							}
-							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
-							//mapObject = fmt.Sprintf("%s", town.Name[0:1])
+							/*	switch Tier := town.Tier; Tier {
+								case 1:
+									ColorTag = "red"
+								case 2:
+									ColorTag = "orange"
+								case 3:
+									ColorTag = "green"
+								default:
+									ColorTag = "white"
+								}*/
+							//mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
+							mapObject = fmt.Sprintf("%s", town.Name[0:2])
 						}
 					}
 
-					if Caravan.X == posX && Caravan.Y == posY {
+					if g.Caravan.X == posX && g.Caravan.Y == posY {
 						mapObject = "@"
 					}
 
@@ -338,6 +245,149 @@ func PrintMap(Map MapTemplate, Towns map[int]TownTemplate, Caravan CaravanTempla
 		}
 	}
 	return PrintableMap
+}
+
+func (g *GameTemplate) CaravanMoveToTown() {
+
+	g.Caravan.X, g.Caravan.Y = FindBestNextPoint(g.Caravan.X, g.Caravan.Y, g.Towns[g.Caravan.Target].X, g.Towns[g.Caravan.Target].Y)
+
+	if g.Caravan.X == g.Towns[g.Caravan.Target].X && g.Caravan.Y == g.Towns[g.Caravan.Target].Y {
+
+		TextLog := fmt.Sprintf("[%d]: Прибыл в \"%s\"\n", g.Step, g.Towns[g.Caravan.Target].Name)
+		PrintToGameLog(TextLog)
+
+		g.Caravan.Status = CaravanStatusInTown
+		g.CaravanSelectDestination()
+
+	} else {
+		g.Caravan.Status = CaravanStatusMoving
+	}
+}
+
+func (g *GameTemplate) CaravanSelectDestination() {
+
+	g.Caravan.PrevTarget = g.Caravan.Target
+
+	for {
+		g.Caravan.Target = RndRange(0, len(g.Towns)-1)
+		if g.Caravan.Target != g.Caravan.PrevTarget {
+			break
+		}
+	}
+}
+
+/**
+MapTemplate
+*/
+
+func (m *MapTemplate) Size() int {
+	return m.Width * m.Height
+}
+
+func (m *MapTemplate) Position(Index int) (int, int) {
+	X := Index % m.Width
+	Y := (Index - X) / m.Width
+	return X, Y
+}
+
+func (m *MapTemplate) Index(X, Y int) int {
+	return Y*m.Width + X
+}
+
+func (m *MapTemplate) MakeBitmap() {
+	m.BitMap = make([]byte, m.Size())
+}
+
+func (m *MapTemplate) FreeCell() (int, int) {
+	free := m.GetFreeCells()
+	index := RndRange(0, len(free)-1)
+	return m.Position(free[index])
+
+}
+
+func (m *MapTemplate) GetFreeCells() []int {
+
+	var free []int
+
+	for index, value := range m.BitMap {
+		if value == 0 {
+			free = append(free, index)
+		}
+	}
+
+	return free
+}
+
+func (m *MapTemplate) PlaceTown(X, Y, Radius int) bool {
+
+	for i := -Radius; i <= Radius; i++ {
+		for j := -Radius; j <= Radius; j++ {
+
+			//A := float64(i)
+			//B := float64(j)
+			//C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
+			C := int(math.Hypot(float64(i), float64(j)))
+
+			tX := X + i
+			tY := Y + j
+
+			if C <= Radius {
+
+				if tX > (m.Width - 1) {
+					tX = (m.Width - 1)
+				}
+				if tY > (m.Height - 1) {
+					tY = (m.Height - 1)
+				}
+				if tX < 0 {
+					tX = 0
+				}
+				if tY < 0 {
+					tY = 0
+				}
+
+				m.BitMap[m.Index(tX, tY)] = 1
+			}
+		} // for j
+	} // for i
+
+	return true
+}
+
+/*
+*
+
+	CaravanTemplate
+*/
+func (c *CaravanTemplate) Move(X, Y int) {}
+
+func (c *CaravanTemplate) MoveBest(X, Y int) {}
+
+func (c *CaravanTemplate) ChooseDestination() {}
+
+func (c *CaravanTemplate) CargoCapacity() float64 {
+	var Capacity float64
+
+	if len(c.Cargo) == 0 {
+		return 0
+	}
+
+	for _, cargo := range c.Cargo {
+		Capacity += cargo.Quantity
+	}
+	return Capacity
+}
+
+func (c *CaravanTemplate) Sell(TownId, CargoId int) {}
+
+func (c *CaravanTemplate) Buy(TownId, CargoId int) {}
+
+func RndRange(Min int, Max int) int {
+	return rand.Intn(Max-Min+1) + Min
+}
+
+func Rnd(Max int) int {
+	return RndRange(1, Max)
 }
 
 func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
@@ -358,153 +408,13 @@ func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
 	}
 }
 
-func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
-
-	var Towns map[int]TownTemplate
-	var Wares map[int]WareGood
-	var MaxTier2 int
-	var MaxTier3 int
-	var Tier2 int = 1
-	var Tier3 int = 1
-
-	Wares = make(map[int]WareGood)
-	Towns = make(map[int]TownTemplate)
-
-	if TownCount > len(AlphabetRU) {
-		TownCount = len(AlphabetRU)
-	}
-
-	MaxTier2 = RndRange(2, 3)
-	MaxTier3 = RndRange(1, 2)
-
-	for i := 1; i <= TownCount; i++ {
-
-		FreeCells := GetFreeCellsOnMap((*BitMap))
-
-		if len(FreeCells) == 0 {
-			break
-		}
-
-		//fmt.Printf("Free: %d\n", len(FreeCells))
-
-		NextFreeCell := RndRange(0, len(FreeCells)-1)
-		PutTownOnBitMap(Map, BitMap, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, MinDistance)
-
-		Wares = make(map[int]WareGood)
-
-		for key := range Goods {
-			Wares[key] = WareGood{key, float64(Rnd(50))}
-		}
-		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
-		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, 500, Wares, 0}
-	}
-
-	for {
-		//break
-		if Tier2 > MaxTier2 {
-			break
-		}
-		t := Rnd(len(Towns))
-		if Towns[t].Tier == 1 {
-			Tier2++
-			t1 := Towns[t]
-			t1.Tier = 2
-			Towns[t] = t1
-		}
-	}
-
-	for {
-		//break
-		if Tier3 > MaxTier3 {
-			break
-		}
-		t := Rnd(len(Towns))
-		if Towns[t].Tier == 1 {
-			Tier3++
-			t1 := Towns[t]
-			t1.Tier = 3
-			Towns[t] = t1
-		}
-	}
-
-	for _, t := range Towns {
-		fmt.Printf("%+v\n", t)
-	}
-	return Towns
-}
-
-func PointInsideRadius(X int, Y int, Radius int) bool {
+func PointInsideRadius(X, Y, Radius int) bool {
 
 	A := math.Abs(float64(0 - X))
 	B := math.Abs(float64(0 - Y))
 	C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
 
-	//if int(math.Hypot(float64(X),float64(Y))) <= Radius {
 	return C <= Radius
-}
-
-func PutTownOnBitMap(Map MapTemplate, BitMap *[][]byte, TownX int, TownY int, Distance int) {
-
-	for i := -Distance; i <= Distance; i++ {
-		for j := -Distance; j <= Distance; j++ {
-
-			tX := TownX + i
-			tY := TownY + j
-
-			if PointInsideRadius(i, j, Distance) {
-				if tY > (Map.Width - 1) {
-					tY = Map.Width - 1
-				}
-				if tX > (Map.Height - 1) {
-					tX = Map.Height - 1
-				}
-				if tX < 0 {
-					tX = 0
-				}
-				if tY < 0 {
-					tY = 0
-				}
-
-				(*BitMap)[tX][tY] = 1
-			}
-
-		} // for j
-	} // for i
-
-}
-
-func GetFreeCellsOnMap(BitMap [][]byte) []FreeCell {
-
-	var FreeCells []FreeCell
-
-	/*for x, i := range BitMap {
-		for y := range i {
-			fmt.Printf("%v", BitMap[x][y])
-		}
-		fmt.Printf("\n")
-	}*/
-
-	for x, i := range BitMap {
-		for y := range i {
-			if BitMap[x][y] == 0 {
-				FreeCells = append(FreeCells, FreeCell{X: x + 1, Y: y + 1})
-			}
-		} // for y
-	} //for x
-
-	//fmt.Printf("Free: %d\n\n", len(FreeCells))
-	return FreeCells
-}
-
-func MakeBitMap(Width int, Height int) [][]byte {
-
-	bitMap := make([][]byte, Height)
-
-	for i := range bitMap {
-		bitMap[i] = make([]byte, Width)
-	}
-
-	return bitMap
 }
 
 func FindBestNextPoint(StartX int, StartY int, DestX int, DestY int) (X int, Y int) {
@@ -537,97 +447,6 @@ func FindBestNextPoint(StartX int, StartY int, DestX int, DestY int) (X int, Y i
 		}
 	}
 	return
-}
-
-func FindPath(StartX int, StartY int, DestX int, DestY int) {
-
-	fmt.Printf("Start %d:%d\n", StartX, StartY)
-	fmt.Printf("Destination %d:%d\n", DestX, DestY)
-
-	bitMap := MakeBitMap(11, 11)
-
-	type Node struct {
-		X    int
-		Y    int
-		Cost float64
-	}
-
-	var (
-		Path      []Node
-		Last      Node
-		TotalCost float64
-	)
-
-	Path = append(Path, Node{X: StartX, Y: StartY, Cost: 0.0})
-	Last.X = StartX
-	Last.Y = StartY
-	Last.Cost = 0.0
-
-	for {
-		bitMap[Last.Y][Last.X] = 1
-		Last.X, Last.Y = FindBestNextPoint(Last.X, Last.Y, DestX, DestY)
-		TotalCost += Last.Cost
-		Path = append(Path, Last)
-		if Last.X == DestX && Last.Y == DestY {
-			break
-		}
-	}
-
-	fmt.Printf("Path: %v\nTotal Cost: %.4f", Path, TotalCost)
-
-	for x, i := range bitMap {
-		for y := range i {
-			fmt.Printf("%v", bitMap[x][y])
-		}
-		fmt.Printf("\n")
-	}
-
-	fmt.Printf("%#v\n", bitMap)
-	fmt.Printf("%d %d\n", len(bitMap), cap(bitMap))
-}
-
-func CaravanCalculateCargoCapacity(Caravan *CaravanTemplate) float64 {
-
-	var Capacity float64
-
-	if len(Caravan.Cargo) == 0 {
-		return 0
-	}
-
-	for _, c := range Caravan.Cargo {
-		Capacity += c.Quantity
-	}
-	//Caravan.Capacity = Capacity
-	return Capacity
-}
-
-func CaravanSelectDestination(Caravan *CaravanTemplate) {
-
-	Caravan.PrevTarget = Caravan.Target
-
-	for {
-		Caravan.Target = RndRange(1, len(Towns))
-		if Caravan.Target != Caravan.PrevTarget {
-			break
-		}
-	}
-}
-
-func CaravanMoveToTown(Caravan *CaravanTemplate) {
-
-	Caravan.X, Caravan.Y = FindBestNextPoint(Caravan.X, Caravan.Y, Towns[Caravan.Target].X, Towns[Caravan.Target].Y)
-
-	if Caravan.X == Towns[Caravan.Target].X && Caravan.Y == Towns[Caravan.Target].Y {
-
-		TextLog := fmt.Sprintf("[%d]: Прибыл в \"%s\"\n", GlobalStep, Towns[Caravan.Target].Name)
-		PrintToGameLog(TextLog)
-
-		Caravan.Status = CaravanStatusInTown
-		CaravanSelectDestination(Caravan)
-
-	} else {
-		Caravan.Status = CaravanStatusMoving
-	}
 }
 
 func TownGetWarePrice(Town TownTemplate, WareId int) float64 {
@@ -682,7 +501,7 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 		SellMinPrice:    0.50,
 	*/
 
-	MaxBuyAmount = Caravan.CapacityMax - CaravanCalculateCargoCapacity(Caravan)
+	MaxBuyAmount = Caravan.CapacityMax - 0 //CaravanCalculateCargoCapacity(Caravan)
 	//fmt.Fprintf(textLog, "- Можем купить: %.0f (%0.f - %0.f)\n", MaxBuyAmount, Caravan.CapacityMax, CaravanCalculateCargoCapacity(Caravan))
 
 	TradeId = TownGetWareWithLowestPrice(Towns[Caravan.PrevTarget])
@@ -719,21 +538,21 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 }
 
 func RedrawViewMap() {
-	//textMap.SetText(PrintMap(GlobalMap, Towns, Caravan))
-	//fmt.Fprintf(textMap, "Размер %dx%d Глобальный шаг: %d\n", GlobalMap.Width, GlobalMap.Height, GlobalStep)
+	textMap.SetText(Game.PrintableMap())
+	fmt.Fprintf(textMap, "Размер %dx%d Глобальный шаг: %d\n", Game.Map.Width, Game.Map.Height, Game.Step)
 }
 
 func RedrawViewCaravan() {
 
 	CaravanStatus := fmt.Sprintf("Назначение: %s (%d, %d)\nПозиция: %d:%d\nДеньги: %.2f\n\nГруз (%.0f/%.0f):\n",
-		Towns[Caravan.Target].Name,
-		Towns[Caravan.Target].Y,
-		Towns[Caravan.Target].X,
-		Caravan.Y,
-		Caravan.X,
-		Caravan.Money,
-		CaravanCalculateCargoCapacity(&Caravan),
-		Caravan.CapacityMax)
+		Game.Towns[Game.Caravan.Target].Name,
+		Game.Towns[Game.Caravan.Target].X+1,
+		Game.Towns[Game.Caravan.Target].Y+1,
+		Game.Caravan.X+1,
+		Game.Caravan.Y+1,
+		Game.Caravan.Money,
+		Game.Caravan.CargoCapacity(),
+		Game.Caravan.CapacityMax)
 
 	/*
 		TradingGoodId int
@@ -741,13 +560,13 @@ func RedrawViewCaravan() {
 		BuyPrice float64
 	*/
 
-	if len(Caravan.Cargo) > 0 {
-		for _, cargo := range Caravan.Cargo {
+	if len(Game.Caravan.Cargo) > 0 {
+		for _, cargo := range Game.Caravan.Cargo {
 			CaravanStatus += fmt.Sprintf("  %s кол: %.0f, цена: %.2f, куплено в: %s\n",
 				Goods[cargo.WareId].Name,
 				cargo.Quantity,
 				cargo.BuyPrice,
-				Towns[cargo.TownId].Name)
+				Game.Towns[cargo.TownId].Name)
 		}
 	} else {
 		CaravanStatus += "  нет"
@@ -761,9 +580,9 @@ func RedrawViewTown() {
 	textTown.SetText("")
 
 	// Текущий пункт назначения
-	fmt.Fprintf(textTown, "Куда идем: %s\n", Towns[Caravan.Target].Name)
+	fmt.Fprintf(textTown, "Куда идем: %s\n", Game.Towns[Game.Caravan.Target].Name)
 
-	for key := 1; key <= len(Towns[Caravan.Target].Wares); key++ {
+	for key := 1; key <= len(Game.Towns[Caravan.Target].Wares); key++ {
 		Price := TownGetWarePrice(Towns[Caravan.Target], key)
 
 		fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2f\n", Goods[key].Name, Towns[Caravan.Target].Wares[key].Quantity, Towns[Caravan.Target].WarehouseLimit, Price)
@@ -790,9 +609,9 @@ func RedrawViewLog() {}
 func RedrawViewStatus() {}
 
 func RedrawScreen() {
-	//RedrawViewMap()
+	RedrawViewMap()
 	//RedrawViewTown()
-	//RedrawViewCaravan()
+	RedrawViewCaravan()
 	//RedrawViewLog()
 	//RedrawViewStatus()
 }
@@ -818,7 +637,7 @@ func GlobalActions() {
 			Перерисовать интерфейс
 	*/
 
-	//	CaravanMoveToTown(&Caravan)
+	Game.CaravanMoveToTown()
 
 	//	SellForBestPrice(&Caravan)
 
@@ -829,14 +648,12 @@ func GlobalActions() {
 }
 
 func GlobalTick() {
-	Game.Ticker = time.NewTicker(TickerInterval / Game.TimeFactor)
 
 	for {
 		select {
-		case <-GlobalTicker.C:
-			//t := time.Now().Format("15:04:05")
+		case <-Game.Ticker.C:
 
-			GlobalStep++
+			Game.Step++
 
 			Tui.QueueUpdateDraw(func() {
 
@@ -850,19 +667,19 @@ func GlobalTick() {
 
 func SetGameSpeed(TimeFactor time.Duration) {
 	Game.TimeFactor = TimeFactor
-	GlobalTicker.Reset(TickerInterval / Game.TimeFactor)
+	Game.Ticker.Reset(TickerInterval / Game.TimeFactor)
 	SpeedStatus := fmt.Sprintf("Сжатие времени: [green]x%d[white]", Game.TimeFactor)
 	textStatus.SetText(SpeedStatus)
 }
 
 func ToggleGamePause() {
-	if !GlobalPause {
-		GlobalPause = true
-		GlobalTicker.Stop()
+	if !Game.Pause {
+		Game.Pause = true
+		Game.Ticker.Stop()
 		textMap.SetTitle("Карта - ПАУЗА")
 	} else {
-		GlobalPause = false
-		GlobalTicker.Reset(TickerInterval / Game.TimeFactor)
+		Game.Pause = false
+		Game.Ticker.Reset(TickerInterval / Game.TimeFactor)
 		textMap.SetTitle("Карта")
 	}
 }
@@ -878,7 +695,10 @@ func InitGame() {
 		3. Запускаем гланый цикл
 
 	*/
+	Game.Ticker = time.NewTicker(TickerInterval / Game.TimeFactor)
 
+	ToggleGamePause()
+	RedrawScreen()
 }
 
 func InitInterface() {
@@ -890,12 +710,11 @@ func InitInterface() {
 func init() {
 
 	log.Println("Init")
+	//rSeed := time.Now().UnixNano()
+	var rSeed int64 = time.Now().UnixNano()
 
-	Game = GameTemplate{
-		Pause:      false,
-		Step:       0,
-		TimeFactor: 1, // 1, 2, 4, 8
-	}
+	rand.Seed(rSeed)
+	log.Printf("Seed: %d\n", rSeed)
 
 	AlphabetRU = []string{
 		"Амурск", "Биробиджан", "Владивосток", "Грозный",
@@ -980,11 +799,42 @@ func init() {
 
 func main() {
 
+	Game = GameTemplate{
+		Pause:      false,
+		Step:       0,
+		TimeFactor: 1, // 1, 2, 4, 8
+	}
+
+	Game.NewMap(30, 15)
+
+	Game.GenerateTowns()
+
+	Game.Caravan = CaravanTemplate{
+		Name:        "Караван",
+		Status:      CaravanStatusStarting,
+		X:           0,
+		Y:           0,
+		Money:       1000,
+		CapacityMax: 100.0,
+		//Target: RndRange(0, len(Game.Towns)-1),
+		//PrevTarget : -1,
+		TradeConfig: TradeConfig{
+			BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= BuyMaxPrice * (PriceMin + (PriceMax - PriceMin))
+			BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax, если получится, то покупается несколько видов товаров
+			BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем BuyMaxAmount * CapacityMax
+			BuyMinAmount:    0.10, // Минимальное кол-во для покупки BuyMinAmount * CapacityMax
+			SellWithProfit:  true, // Всегда продавать по цене большей чем цена покупки
+			SellMinPrice:    0.50, // Если SellWithProfit == false, то продавать если Цена >= SellMinPrice * (PriceMin + (PriceMax - PriceMin))
+		},
+	}
+
+	Game.CaravanSelectDestination()
+
 	Tui = tview.NewApplication()
 
 	textStatus = tview.NewTextView().
 		SetDynamicColors(true).
-		SetText("Сжатие времени: [green]х1[white] х2 х4 х8")
+		SetText("Сжатие времени: [green]х1[white]")
 
 	textStatus.
 		SetBorder(true).
@@ -1009,6 +859,8 @@ func main() {
 		case 52:
 			// 4
 			SetGameSpeed(8)
+		case 81, 113:
+			// qQ - использовать для выхода с сохранением
 		}
 		return event
 	})
@@ -1072,22 +924,6 @@ func main() {
 		AddItem(textStatus, 2, 0, 1, 2, 0, 0, false)
 
 	log.Println("Generate Caravan")
-	Caravan = CaravanTemplate{
-		Name:        "Караван",
-		Status:      CaravanStatusStarting,
-		X:           1,
-		Y:           1,
-		Money:       1000,
-		CapacityMax: 100.0,
-		TradeConfig: TradeConfig{
-			BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= BuyMaxPrice * (PriceMin + (PriceMax - PriceMin))
-			BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax, если получится, то покупается несколько видов товаров
-			BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем BuyMaxAmount * CapacityMax
-			BuyMinAmount:    0.10, // Минимальное кол-во для покупки BuyMinAmount * CapacityMax
-			SellWithProfit:  true, // Всегда продавать по цене большей чем цена покупки
-			SellMinPrice:    0.50, // Если SellWithProfit == false, то продавать если Цена >= SellMinPrice * (PriceMin + (PriceMax - PriceMin))
-		},
-	}
 
 	//Caravan.Target = RndRange(1, len(Towns))
 	//Caravan.PrevTarget = -1
@@ -1111,94 +947,65 @@ func main() {
 
 /*ttMap := NewMap(60, 15)
 
-	/*for i := 0; i < ttMap.Size(); i++ {
-		ttX, ttY := ttMap.GetPosition(i)
-		ttI := ttMap.GetIndex(ttX, ttY)
-		fmt.Printf("%d - %d:%d (%d)\n ", i, ttX, ttY, ttI)
-	}
+/*for i := 0; i < ttMap.Size(); i++ {
+	ttX, ttY := ttMap.GetPosition(i)
+	ttI := ttMap.GetIndex(ttX, ttY)
+	fmt.Printf("%d - %d:%d (%d)\n ", i, ttX, ttY, ttI)
+}
 
-	//os.Exit(0)
+//os.Exit(0)
 
-	ttTowns := []TownTemplate{}
-
-/*	ttMap.PlaceTown(1, 1, 5)
-//	ttMap.PlaceTown(15, 1, 5)
-//	ttMap.PlaceTown(1, 10, 5)
-//	ttMap.PlaceTown(15, 10, 5)
-
-	for k, v := range ttMap.BitMap{
-		if k % ttMap.Width == 0 {
-			fmt.Printf("\n")
-		}
-		fmt.Printf("%+v ",v)
-	}
-	fmt.Printf("\n")
-
-	fmt.Printf("FreeCelss: %+v\n", ttMap.GetFreeCells())
-
-	fmt.Printf("Free cells count: %v\n", len(ttMap.GetFreeCells()))
-
-	index := RndRange(0, len(ttMap.GetFreeCells())-1)
-
-	fmt.Printf("Index: %d, value: %v\n", index, ttMap.GetFreeCells()[index])
-
-	nextFreeCell :=  ttMap.GetFreeCells()[index]
-
-	ttX, ttY := ttMap.GetPosition(nextFreeCell)
-
-	fmt.Printf("Pos: %d:%d\n", ttX, ttY)
+ttTowns := []TownTemplate{}
 
 
-	// ----
-	ttMap.PlaceTown(ttX, ttY, 5)
-
-	for k, v := range ttMap.BitMap{
-		if k % ttMap.Width == 0 {
-			fmt.Printf("\n")
-		}
-		fmt.Printf("%+v ",v)
-	}
-	fmt.Printf("\n")
-
-	fmt.Printf("FreeCelss: %+v\n", ttMap.GetFreeCells())
-
-	fmt.Printf("Free cells count: %v\n", len(ttMap.GetFreeCells()))
-
-	//os.Exit(0)
-
-	for i:=1; i <= len(AlphabetRU); i++ {
-
-		freeCells := ttMap.GetFreeCells()
-
-		if len(freeCells) == 0 {
-			break
-		}
-		/*for k, v := range ttMap.BitMap{
-			if k % ttMap.Width == 0 {
-				fmt.Printf("\n")
-			}
-			fmt.Printf("%d",v)
-		}
+for k, v := range ttMap.BitMap{
+	if k % ttMap.Width == 0 {
 		fmt.Printf("\n")
-
-		fmt.Printf("%v\n", ttMap.BitMap)
-
-		fmt.Printf("Free: %d\n",len(freeCells))
-
-		index := RndRange(0, len(freeCells)-1)
-
-		ttX, ttY := ttMap.GetPosition(freeCells[index])
-
-		//fmt.Printf("%d - %d:%d\n" ,index, ttX, ttY)
-		//fmt.Printf("%v\n\n", ttMap.GetFreeCells())
-
-		if ttMap.PlaceTown(ttX, ttY, 5) {
-			ttTowns = append(ttTowns, TownTemplate{Id: i, Name: AlphabetRU[i-1] ,X: ttX,Y: ttY,},)
-		}
 	}
+	fmt.Printf("%+v ",v)
+}
+fmt.Printf("\n")
+
+fmt.Printf("FreeCelss: %+v\n", ttMap.GetFreeCells())
+
+fmt.Printf("Free cells count: %v\n", len(ttMap.GetFreeCells()))
+
+index := RndRange(0, len(ttMap.GetFreeCells())-1)
+
+fmt.Printf("Index: %d, value: %v\n", index, ttMap.GetFreeCells()[index])
+
+nextFreeCell :=  ttMap.GetFreeCells()[index]
+
+ttX, ttY := ttMap.GetPosition(nextFreeCell)
+
+fmt.Printf("Pos: %d:%d\n", ttX, ttY)
 
 
-	for k, v := range ttMap.BitMap{
+// ----
+ttMap.PlaceTown(ttX, ttY, 5)
+
+for k, v := range ttMap.BitMap{
+	if k % ttMap.Width == 0 {
+		fmt.Printf("\n")
+	}
+	fmt.Printf("%+v ",v)
+}
+fmt.Printf("\n")
+
+fmt.Printf("FreeCelss: %+v\n", ttMap.GetFreeCells())
+
+fmt.Printf("Free cells count: %v\n", len(ttMap.GetFreeCells()))
+
+//os.Exit(0)
+
+for i:=1; i <= len(AlphabetRU); i++ {
+
+	freeCells := ttMap.GetFreeCells()
+
+	if len(freeCells) == 0 {
+		break
+	}
+	/*for k, v := range ttMap.BitMap{
 		if k % ttMap.Width == 0 {
 			fmt.Printf("\n")
 		}
@@ -1206,12 +1013,37 @@ func main() {
 	}
 	fmt.Printf("\n")
 
+	fmt.Printf("%v\n", ttMap.BitMap)
 
-	fmt.Println(len(ttMap.GetFreeCells()))
-	fmt.Printf("%+v\n",ttTowns)
-	fmt.Println(len(ttTowns))
+	fmt.Printf("Free: %d\n",len(freeCells))
 
-	os.Exit(0)
+	index := RndRange(0, len(freeCells)-1)
+
+	ttX, ttY := ttMap.GetPosition(freeCells[index])
+
+	//fmt.Printf("%d - %d:%d\n" ,index, ttX, ttY)
+	//fmt.Printf("%v\n\n", ttMap.GetFreeCells())
+
+	if ttMap.PlaceTown(ttX, ttY, 5) {
+		ttTowns = append(ttTowns, TownTemplate{Id: i, Name: AlphabetRU[i-1] ,X: ttX,Y: ttY,},)
+	}
+}
+
+
+for k, v := range ttMap.BitMap{
+	if k % ttMap.Width == 0 {
+		fmt.Printf("\n")
+	}
+	fmt.Printf("%d",v)
+}
+fmt.Printf("\n")
+
+
+fmt.Println(len(ttMap.GetFreeCells()))
+fmt.Printf("%+v\n",ttTowns)
+fmt.Println(len(ttTowns))
+
+os.Exit(0)
 */
 
 /*	Alphabet = []string{
@@ -1232,4 +1064,192 @@ func main() {
 	"Роман", "Семен", "Татьяна", "Ульяна",
 	"Федор", "Харитон", "Цапля", "Человек",
 	"Шура", "Щука", "Эхо", "Юрий", "Яков",
+}*/
+
+/*func PutTownsOnMap(Map MapTemplate, BitMap *[][]byte, TownCount int, MinDistance int) map[int]TownTemplate {
+
+	var Towns map[int]TownTemplate
+	var Wares map[int]WareGood
+	var MaxTier2 int
+	var MaxTier3 int
+	var Tier2 int = 1
+	var Tier3 int = 1
+
+	Wares = make(map[int]WareGood)
+	Towns = make(map[int]TownTemplate)
+
+	if TownCount > len(AlphabetRU) {
+		TownCount = len(AlphabetRU)
+	}
+
+	MaxTier2 = RndRange(2, 3)
+	MaxTier3 = RndRange(1, 2)
+
+	for i := 1; i <= TownCount; i++ {
+
+		FreeCells := GetFreeCellsOnMap((*BitMap))
+
+		if len(FreeCells) == 0 {
+			break
+		}
+
+		//fmt.Printf("Free: %d\n", len(FreeCells))
+
+		NextFreeCell := RndRange(0, len(FreeCells)-1)
+		PutTownOnBitMap(Map, BitMap, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, MinDistance)
+
+		Wares = make(map[int]WareGood)
+
+		for key := range Goods {
+			Wares[key] = WareGood{key, float64(Rnd(50))}
+		}
+		// Id, Name, Tier, X, Y, WarehouseLimit, Wares, Visited
+		Towns[i] = TownTemplate{i, AlphabetRU[i-1], 1, FreeCells[NextFreeCell].X, FreeCells[NextFreeCell].Y, 500, Wares, 0}
+	}
+
+	for {
+		//break
+		if Tier2 > MaxTier2 {
+			break
+		}
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier2++
+			t1 := Towns[t]
+			t1.Tier = 2
+			Towns[t] = t1
+		}
+	}
+
+	for {
+		//break
+		if Tier3 > MaxTier3 {
+			break
+		}
+		t := Rnd(len(Towns))
+		if Towns[t].Tier == 1 {
+			Tier3++
+			t1 := Towns[t]
+			t1.Tier = 3
+			Towns[t] = t1
+		}
+	}
+
+	for _, t := range Towns {
+		fmt.Printf("%+v\n", t)
+	}
+	return Towns
+}*/
+
+/*func FindPath(StartX int, StartY int, DestX int, DestY int) {
+
+	fmt.Printf("Start %d:%d\n", StartX, StartY)
+	fmt.Printf("Destination %d:%d\n", DestX, DestY)
+
+	bitMap := MakeBitMap(11, 11)
+
+	type Node struct {
+		X    int
+		Y    int
+		Cost float64
+	}
+
+	var (
+		Path      []Node
+		Last      Node
+		TotalCost float64
+	)
+
+	Path = append(Path, Node{X: StartX, Y: StartY, Cost: 0.0})
+	Last.X = StartX
+	Last.Y = StartY
+	Last.Cost = 0.0
+
+	for {
+		bitMap[Last.Y][Last.X] = 1
+		Last.X, Last.Y = FindBestNextPoint(Last.X, Last.Y, DestX, DestY)
+		TotalCost += Last.Cost
+		Path = append(Path, Last)
+		if Last.X == DestX && Last.Y == DestY {
+			break
+		}
+	}
+
+	fmt.Printf("Path: %v\nTotal Cost: %.4f", Path, TotalCost)
+
+	for x, i := range bitMap {
+		for y := range i {
+			fmt.Printf("%v", bitMap[x][y])
+		}
+		fmt.Printf("\n")
+	}
+
+	fmt.Printf("%#v\n", bitMap)
+	fmt.Printf("%d %d\n", len(bitMap), cap(bitMap))
+}*/
+
+/*func PrintMap(Map MapTemplate, Towns map[int]TownTemplate, Caravan CaravanTemplate) string {
+	// ╗ ╝ ╚ ╔ ╩ ╦ ╠ ═ ║ ╬ ╣ - borders
+	// │ ┤ ┐ └ ┴ ┬ ├ ─ ┼ ┘ ┌ - roads
+	// @ - caravan
+
+	var PrintableMap string
+	var ColorTag string
+
+	for posX := 0; posX <= Map.Height+1; posX++ {
+		for posY := 0; posY <= Map.Width+1; posY++ {
+
+			//fmt.Printf("X:%d, Y:%d\n", posX, posY)
+
+			if posY == 0 {
+				if posX == 0 { // left upper corner
+					PrintableMap = PrintableMap + "╔"
+				} else if posX == (Map.Height + 1) { // left bottom corner
+					PrintableMap = PrintableMap + "╚"
+				} else {
+					PrintableMap = PrintableMap + "║" // left border
+				}
+
+			} else if posY == (Map.Width + 1) {
+				if posX == 0 { // right upper corner
+					PrintableMap = PrintableMap + "╗\n"
+				} else if posX == (Map.Height + 1) { // right  bottom corner
+					PrintableMap = PrintableMap + "╝\n"
+				} else {
+					PrintableMap = PrintableMap + "║\n" // right border
+				}
+
+			} else {
+				if posX == (Map.Height+1) || posX == 0 { // up and bottom border
+					PrintableMap = PrintableMap + "═"
+				} else { // fill space inside map borders and place towns
+
+					var mapObject string = " "
+					for _, town := range Towns {
+						if town.X == posX && town.Y == posY {
+							switch Tier := town.Tier; Tier {
+							case 1:
+								ColorTag = "red"
+							case 2:
+								ColorTag = "orange"
+							case 3:
+								ColorTag = "green"
+							default:
+								ColorTag = "white"
+							}
+							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
+							//mapObject = fmt.Sprintf("%s", town.Name[0:1])
+						}
+					}
+
+					if Caravan.X == posX && Caravan.Y == posY {
+						mapObject = "@"
+					}
+
+					PrintableMap = PrintableMap + mapObject
+				}
+			}
+		}
+	}
+	return PrintableMap
 }*/
