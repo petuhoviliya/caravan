@@ -20,13 +20,12 @@ const CaravanStatusStarting uint8 = 255
 
 const TownPlaceRadius int = 5
 
-type money int64
-
 type GameTemplate struct {
-	Pause      bool
-	Step       int
-	Ticker     *time.Ticker
-	TimeFactor time.Duration
+	Pause        bool
+	Step         int
+	Ticker       *time.Ticker
+	TimeFactor   time.Duration
+	TotalVisited int
 
 	Tui     tview.Application
 	Map     MapTemplate
@@ -43,7 +42,7 @@ type MapTemplate struct {
 type CaravanTemplate struct {
 	Name        string
 	Status      uint8
-	Money       float64
+	Money       int64
 	X           int
 	Y           int
 	Target      int
@@ -57,7 +56,7 @@ type Cargo struct {
 	WareId   int
 	TownId   int
 	Quantity float64
-	BuyPrice float64
+	BuyPrice int64
 }
 
 type TownTemplate struct {
@@ -80,8 +79,8 @@ type TradingGood struct {
 	Id          int
 	Tier        int
 	Name        string
-	PriceMin    float64
-	PriceMax    float64
+	PriceMin    int64
+	PriceMax    int64
 	Unit        string
 	UnitVolume  float64
 	UnitWeight  float64
@@ -187,7 +186,7 @@ func (g *GameTemplate) PrintableMap() string {
 	// @ - caravan
 
 	var PrintableMap string
-	//var ColorTag string
+	var ColorTag string
 
 	for posY := -1; posY <= g.Map.Height; posY++ {
 		for posX := -1; posX <= g.Map.Width; posX++ {
@@ -220,18 +219,18 @@ func (g *GameTemplate) PrintableMap() string {
 					var mapObject string = " "
 					for _, town := range g.Towns {
 						if town.X == posX && town.Y == posY {
-							/*	switch Tier := town.Tier; Tier {
-								case 1:
-									ColorTag = "red"
-								case 2:
-									ColorTag = "orange"
-								case 3:
-									ColorTag = "green"
-								default:
-									ColorTag = "white"
-								}*/
-							//mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
-							mapObject = fmt.Sprintf("%s", town.Name[0:2])
+							switch Tier := town.Tier; Tier {
+							case 1:
+								ColorTag = "red"
+							case 2:
+								ColorTag = "orange"
+							case 3:
+								ColorTag = "green"
+							default:
+								ColorTag = "white"
+							}
+							mapObject = fmt.Sprintf("[%s]%s[%s]", ColorTag, town.Name[0:2], "white")
+							//mapObject = fmt.Sprintf("%s", town.Name[0:2])
 						}
 					}
 
@@ -323,9 +322,6 @@ func (m *MapTemplate) PlaceTown(X, Y, Radius int) bool {
 	for i := -Radius; i <= Radius; i++ {
 		for j := -Radius; j <= Radius; j++ {
 
-			//A := float64(i)
-			//B := float64(j)
-			//C := int(math.Sqrt(math.Pow(A, 2) + math.Pow(B, 2)))
 			C := int(math.Hypot(float64(i), float64(j)))
 
 			tX := X + i
@@ -390,24 +386,6 @@ func Rnd(Max int) int {
 	return RndRange(1, Max)
 }
 
-func MoveToPoint(Caravan *CaravanTemplate, DestX int, DestY int) {
-
-	modX := Caravan.X - DestX
-	modY := Caravan.Y - DestY
-
-	if modX < 0 {
-		Caravan.X++
-	} else if modX > 0 {
-		Caravan.X--
-	}
-
-	if modY < 0 {
-		Caravan.Y++
-	} else if modY > 0 {
-		Caravan.Y--
-	}
-}
-
 func PointInsideRadius(X, Y, Radius int) bool {
 
 	A := math.Abs(float64(0 - X))
@@ -449,15 +427,15 @@ func FindBestNextPoint(StartX int, StartY int, DestX int, DestY int) (X int, Y i
 	return
 }
 
-func TownGetWarePrice(Town TownTemplate, WareId int) float64 {
-	Price := Goods[WareId].PriceMin + (Goods[WareId].PriceMax-Goods[WareId].PriceMin)*(1.0-Town.Wares[WareId].Quantity/Town.WarehouseLimit)
+func TownGetWarePrice(Town TownTemplate, WareId int) int64 {
+	Price := Goods[WareId].PriceMin + (Goods[WareId].PriceMax-Goods[WareId].PriceMin)*int64(1.0-Town.Wares[WareId].Quantity/Town.WarehouseLimit)
 	return Price
 }
 
 func TownGetWareWithLowestPrice(Town TownTemplate) int {
 
-	var LowestPrice = math.Inf(1)
-	var Price float64
+	var LowestPrice = int64(math.Inf(1))
+	var Price int64
 	var Id int
 
 	for _, Ware := range Town.Wares {
@@ -482,7 +460,7 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 
 	var (
 		TradeId      int
-		Price        float64
+		Price        int64
 		BuyAmount    float64
 		MaxBuyAmount float64
 		TextLog      string
@@ -519,9 +497,9 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 
 	Price = TownGetWarePrice(Towns[Caravan.PrevTarget], TradeId)
 
-	if BuyAmount > math.Floor(Caravan.Money/Price) {
+	/*if BuyAmount > math.Floor(Caravan.Money / Price) {
 		BuyAmount = math.Floor(Caravan.Money / Price)
-	}
+	}*/
 
 	//fmt.Fprintf(textLog, "--- %+v\n", Towns[Caravan.PrevTarget].Wares[TradeId])
 
@@ -529,9 +507,9 @@ func BuyForBestPrice(Caravan *CaravanTemplate) {
 
 	Caravan.Cargo = append(Caravan.Cargo, Cargo{WareId: TradeId, TownId: Caravan.PrevTarget, Quantity: BuyAmount, BuyPrice: Price})
 
-	Caravan.Money -= BuyAmount * Price
+	/*Caravan.Money -= BuyAmount * Price*/
 
-	TextLog = fmt.Sprintf("  Куплено: %s, кол-во: %.1f, цена: %.2f\n", Goods[TradeId].Name, BuyAmount, Price)
+	TextLog = fmt.Sprintf("  Куплено: %s, кол-во: %.1f, цена: %.2d\n", Goods[TradeId].Name, BuyAmount, Price)
 
 	PrintToGameLog(TextLog)
 
@@ -544,7 +522,7 @@ func RedrawViewMap() {
 
 func RedrawViewCaravan() {
 
-	CaravanStatus := fmt.Sprintf("Назначение: %s (%d, %d)\nПозиция: %d:%d\nДеньги: %.2f\n\nГруз (%.0f/%.0f):\n",
+	CaravanStatus := fmt.Sprintf("Назначение: %s (%d, %d)\nПозиция: %d:%d\nДеньги: %.2d\n\nГруз (%.0f/%.0f):\n",
 		Game.Towns[Game.Caravan.Target].Name,
 		Game.Towns[Game.Caravan.Target].X+1,
 		Game.Towns[Game.Caravan.Target].Y+1,
@@ -562,7 +540,7 @@ func RedrawViewCaravan() {
 
 	if len(Game.Caravan.Cargo) > 0 {
 		for _, cargo := range Game.Caravan.Cargo {
-			CaravanStatus += fmt.Sprintf("  %s кол: %.0f, цена: %.2f, куплено в: %s\n",
+			CaravanStatus += fmt.Sprintf("  %s кол: %.0f, цена: %.2d, куплено в: %s\n",
 				Goods[cargo.WareId].Name,
 				cargo.Quantity,
 				cargo.BuyPrice,
@@ -585,7 +563,7 @@ func RedrawViewTown() {
 	for key := 1; key <= len(Game.Towns[Caravan.Target].Wares); key++ {
 		Price := TownGetWarePrice(Towns[Caravan.Target], key)
 
-		fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2f\n", Goods[key].Name, Towns[Caravan.Target].Wares[key].Quantity, Towns[Caravan.Target].WarehouseLimit, Price)
+		fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2d\n", Goods[key].Name, Towns[Caravan.Target].Wares[key].Quantity, Towns[Caravan.Target].WarehouseLimit, Price)
 	}
 
 	fmt.Fprintf(textTown, "\n")
@@ -597,7 +575,7 @@ func RedrawViewTown() {
 
 		for key := 1; key <= len(Towns[Caravan.PrevTarget].Wares); key++ {
 			Price := TownGetWarePrice(Towns[Caravan.PrevTarget], key)
-			fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2f\n", Goods[key].Name, Towns[Caravan.PrevTarget].Wares[key].Quantity, Towns[Caravan.PrevTarget].WarehouseLimit, Price)
+			fmt.Fprintf(textTown, "%s: %.0f/%.0f Цена: %.2d\n", Goods[key].Name, Towns[Caravan.PrevTarget].Wares[key].Quantity, Towns[Caravan.PrevTarget].WarehouseLimit, Price)
 		}
 
 		fmt.Fprintf(textTown, "\n\n")
