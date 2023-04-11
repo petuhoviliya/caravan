@@ -19,6 +19,7 @@ const CaravanStatusInTown uint8 = 2
 const CaravanStatusStarting uint8 = 255
 
 const TownPlaceRadius int = 5
+const TownStartWares int = 100
 
 type GameTemplate struct {
 	Pause        bool
@@ -27,9 +28,8 @@ type GameTemplate struct {
 	TimeFactor   time.Duration
 	TotalVisited int
 
-	Tui     tview.Application
 	Map     MapTemplate
-	Towns   []TownTemplate
+	Towns   map[int]TownTemplate
 	Caravan CaravanTemplate
 }
 
@@ -155,13 +155,15 @@ GameTemplate функции
 
 func (g *GameTemplate) GenerateTowns() {
 
-	for key, value := range AlphabetRU {
+	g.Towns = make(map[int]TownTemplate)
+
+	for id, name := range AlphabetRU {
 
 		if len(g.Map.GetFreeCells()) == 0 {
 			break
 		}
 
-		g.Towns = append(g.Towns, Game.NewTown(key, value))
+		g.Towns[id] = Game.NewTown(id, name)
 	}
 }
 
@@ -247,6 +249,7 @@ func (g *GameTemplate) PrintableMap() string {
 }
 
 func (g *GameTemplate) CaravanMoveToTown() {
+	
 
 	g.Caravan.X, g.Caravan.Y = FindBestNextPoint(g.Caravan.X, g.Caravan.Y, g.Towns[g.Caravan.Target].X, g.Towns[g.Caravan.Target].Y)
 
@@ -256,6 +259,15 @@ func (g *GameTemplate) CaravanMoveToTown() {
 		PrintToGameLog(TextLog)
 
 		g.Caravan.Status = CaravanStatusInTown
+		
+		v := g.Towns[g.Caravan.Target]
+
+
+		v.Visited ++
+
+		g.Towns[g.Caravan.Target] = v
+		Game.TotalVisited ++
+		
 		g.CaravanSelectDestination()
 
 	} else {
@@ -350,9 +362,7 @@ func (m *MapTemplate) PlaceTown(X, Y, Radius int) bool {
 	return true
 }
 
-/*
-*
-
+/**
 	CaravanTemplate
 */
 func (c *CaravanTemplate) Move(X, Y int) {}
@@ -378,6 +388,16 @@ func (c *CaravanTemplate) Sell(TownId, CargoId int) {}
 
 func (c *CaravanTemplate) Buy(TownId, CargoId int) {}
 
+/**
+ TownTemplate
+*/
+func (t *TownTemplate) FillWares() {
+	//t.Wares = make(map[int]Wares)
+}
+
+/**
+ Common functions
+*/
 func RndRange(Min int, Max int) int {
 	return rand.Intn(Max-Min+1) + Min
 }
@@ -554,11 +574,18 @@ func RedrawViewCaravan() {
 }
 
 func RedrawViewTown() {
-
-	textTown.SetText("")
+	
+	var txt string
+	
+	if Game.TotalVisited > 0 {
+		for k := 0; k <= len(Game.Towns) - 1; k++{	
+			txt += fmt.Sprintf("%s: %d (%.2f%%)\n", Game.Towns[k].Name, Game.Towns[k].Visited, float64(Game.Towns[k].Visited)/float64(Game.TotalVisited)*100)
+		}
+	}
+	textTown.SetText(txt)
 
 	// Текущий пункт назначения
-	fmt.Fprintf(textTown, "Куда идем: %s\n", Game.Towns[Game.Caravan.Target].Name)
+/*	fmt.Fprintf(textTown, "Куда идем: %s\n", Game.Towns[Game.Caravan.Target].Name)
 
 	for key := 1; key <= len(Game.Towns[Caravan.Target].Wares); key++ {
 		Price := TownGetWarePrice(Towns[Caravan.Target], key)
@@ -579,7 +606,7 @@ func RedrawViewTown() {
 		}
 
 		fmt.Fprintf(textTown, "\n\n")
-	}
+	}*/
 }
 
 func RedrawViewLog() {}
@@ -588,7 +615,7 @@ func RedrawViewStatus() {}
 
 func RedrawScreen() {
 	RedrawViewMap()
-	//RedrawViewTown()
+	RedrawViewTown()
 	RedrawViewCaravan()
 	//RedrawViewLog()
 	//RedrawViewStatus()
@@ -691,6 +718,7 @@ func init() {
 	//rSeed := time.Now().UnixNano()
 	var rSeed int64 = time.Now().UnixNano()
 
+	//rand.Seed(1676424407175440563)
 	rand.Seed(rSeed)
 	log.Printf("Seed: %d\n", rSeed)
 
@@ -919,8 +947,9 @@ func main() {
 		panic(err)
 	}
 
+  fmt.Printf("%+v\n", Game.Towns)
+	fmt.Println(Game.TotalVisited)
 	os.Exit(0)
-
 }
 
 /*ttMap := NewMap(60, 15)
