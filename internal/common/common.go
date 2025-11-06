@@ -89,3 +89,4 @@ func FindBestNextPoint(StartX int, StartY int, DestX int, DestY int) (X int, Y i
   }
   return
 }
+

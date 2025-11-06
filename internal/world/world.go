@@ -2,6 +2,9 @@ package world
 
 import (
   "math"
+	"log"
+	"os"
+	"fmt"
 
   "github.com/petuhoviliya/caravan/internal/common"
 )
@@ -83,3 +86,12 @@ func (t *Template) PlaceTown(X, Y, Radius int) bool {
   return true
 }
 
+func (t *Template) LoadPredefinedMap(file string) {
+	content, err := os.ReadFile("example.txt")
+	if err != nil {
+		log.Fatalf("Error reading file: %v\n", err)
+	}
+
+	// Convert the byte slice to a string and print
+	fmt.Println(string(content))
+}
