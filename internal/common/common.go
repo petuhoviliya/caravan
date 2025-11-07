@@ -49,6 +49,10 @@ func Rnd(max int) int {
   return RndRange(1, max)
 }
 
+func Rnd100() int {
+  return RndRange(1, 100)
+}
+
 func PointInsideRadius(X, Y, Radius int) bool {
 
   A := math.Abs(float64(0 - X))
