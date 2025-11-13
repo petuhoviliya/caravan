@@ -14,6 +14,7 @@ const (
   MinDamage    int = 1
 
   BaseHealth      int = 50
+  BaseHealthRegen int = 1
   BaseAttack      int = 20
   BaseArmor       int = 10
   BaseHitChance   int = 60
@@ -26,12 +27,14 @@ const (
 
 
 type Soldier struct {
-  Grade    int
-  Health   int
-  Armor    int
-  Attack   int
-  Accuracy int
-  Evade    int
+  Grade       int
+  Health      int
+  HealthMax   int
+  HealthRegen int
+  Armor       int
+  Attack      int
+  Accuracy    int
+  Evade       int
 }
 
 type Party struct {
@@ -54,6 +57,16 @@ func (s *Soldier) IsEvade() bool {
   return s.Evade >= common.Rnd100()
 }
 
+func (s *Soldier) DoHeal() {
+  if s.Health == s.HealthMax { return }
+  if !s.IsAlive() { return }
+
+  s.Health += s.HealthRegen
+  if s.Health > s.HealthMax {
+    s.Health = s.HealthMax
+  }
+}
+
 func (s *Soldier) DoAttack(target *Soldier) int {
 
   if !s.IsHit() { return -1 }       // промахнулся
@@ -74,13 +87,16 @@ func (s *Soldier) DoAttack(target *Soldier) int {
 func (p *Party) NewParty(Grade, Count int){
   p.Soldiers = make(map[int]Soldier)
   for i := 1; i <= Count; i++ {
+    tmpHealth := common.RndRange(BaseHealth, BaseHealth + VarHealth) + Grade*10
     p.Soldiers[i] = Soldier{
-      Grade:    Grade,
-      Health:   common.RndRange(BaseHealth, BaseHealth + VarHealth) + Grade*10,
-      Armor:    common.RndRange(BaseArmor,  BaseArmor  + VarArmor)  + Grade*2,
-      Attack:   common.RndRange(BaseAttack, BaseAttack + VarAttack) + Grade,
-      Accuracy: BaseHitChance   + Grade*5,
-      Evade:    BaseEvadeChance + Grade,
+      Grade:       Grade,
+      Health:      tmpHealth,
+      HealthMax:   tmpHealth,
+      HealthRegen: BaseHealthRegen + Grade / 2,
+      Armor:       common.RndRange(BaseArmor,  BaseArmor  + VarArmor)  + Grade*2,
+      Attack:      common.RndRange(BaseAttack, BaseAttack + VarAttack) + Grade,
+      Accuracy:    BaseHitChance   + Grade*5,
+      Evade:       BaseEvadeChance + Grade,
     }
   }
 }
