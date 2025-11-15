@@ -31,6 +31,11 @@ type Goods struct {
 	Status   uint8
 }
 
+type ProductionList struct {
+	
+}
+
+
 type Template struct {
   Id             int
   Name           string

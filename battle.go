@@ -94,7 +94,7 @@ func (p *Party) NewParty(Grade, Count int){
       HealthMax:   tmpHealth,
       HealthRegen: BaseHealthRegen + Grade / 2,
       Armor:       common.RndRange(BaseArmor,  BaseArmor  + VarArmor)  + Grade*2,
-      Attack:      common.RndRange(BaseAttack, BaseAttack + VarAttack) + Grade,
+      Attack:      common.RndRange(BaseAttack, BaseAttack + VarAttack) + Grade*5,
       Accuracy:    BaseHitChance   + Grade*5,
       Evade:       BaseEvadeChance + Grade,
     }
@@ -122,7 +122,7 @@ func main() {
   )
 
   One.NewParty(7,5)
-  Two.NewParty(5,10)
+  Two.NewParty(4,10)
 
   DoBattle(&One, &Two)
 
