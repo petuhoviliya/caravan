@@ -51,6 +51,55 @@ type TradingGood struct {
 }
 */
 
+/*
+Идентификатор предметов
+┃ ┫ ┣ ╋ ┓ ┏ ┛ ┗ ┻ ┳ ━ 
+
+MMMXXYYZZZ
+┃  ┃ ┃ ┗ порядковый номер предмета
+┃  ┃ ┗━━ подгруппа предметов (тип оружия, брони и т.п.)
+┃  ┗━━━━ группа предметов (оружие, броня, амуниция)
+┗━━━━━━ тип
+
+11 - оружие
+  01 - оружие ближнего боя
+    01 - одноручное
+      001 - 
+      002 -
+      003 -
+    02 - двуручное
+    03 - древковое
+    04 - древковое друручное
+    05 - одно/дву-ручное
+  02 - оружие дальнего боя
+    01 - луки
+    02 - арбалеты
+    03 - метательное
+  03 - боеприпасы для оружия дальнего боя
+    01 - стрелы
+    02 - болты
+    03 - пули для пращи
+12 - одежда
+  01 - одежда
+    01 - одежда
+  02 - броня
+    01 - кожанная броня
+    02 - кольчуга
+    03 - латы
+    04 - щиты
+13 - расходники
+  01 - еда
+  02 - питье
+  03 - медицина
+14 - ресурсы
+  01 - 
+15 - товары
+
+
+
+
+*/
+
 var (
   Game game.Template
 
@@ -133,9 +182,9 @@ func RedrawViewTown() {
 ↻ 3 - потребляется как ресурс для производства, только покупается
 ↺ 4 - производимый товар, только продается
 */
-	//arrows :=  []string{"⇅","↑","↓","↻","↺"}
+  //arrows :=  []string{"⇅","↑","↓","↻","↺"}
 
-  nextTown = Game.Towns[Game.Caravan.Target]
+  nextTown = Game.Towns[0]
   /*if Game.Caravan.PrevTarget != -1 {
     prevTown = Game.Towns[Game.Caravan.PrevTarget]
   }*/
@@ -196,9 +245,9 @@ func GlobalActions() {
 
        Перерисовать интерфейс
   */
-	Game.Caravan.PayTaxes(Game.Step)
+  Game.Caravan.PayTaxes(Game.Step)
   Game.CaravanMoveToTown()
-	
+  
 
   //  SellForBestPrice(&Caravan)
 
@@ -382,7 +431,7 @@ func main() {
     //Target: common.RndRange(0, len(Game.Towns)-1),
     //PrevTarget : -1,
     Config: caravan.Config{
-			MinBalance:      100,
+      MinBalance:      100,
       BuyMaxPrice:     0.25, // Покупать если удовлетворено условие:  Цена <= BuyMaxPrice * (PriceMin + (PriceMax - PriceMin))
       BuyFullCapacity: true, // Стараться купить Кол-во равное CapacityMax, если получится, то покупается несколько видов товаров
       BuyMaxAmount:    0.50, // Если BuyFullCapacity == false, то Кол-во покупаемого товара не более чем BuyMaxAmount * CapacityMax
@@ -507,6 +556,6 @@ func main() {
 
   fmt.Printf("%+v\n", Game)
   fmt.Println(Game.TotalVisited)
-	//fmt.Printf("%#v\n", town.GoodStatus)
+  //fmt.Printf("%#v\n", town.GoodStatus)
   os.Exit(0)
 }
