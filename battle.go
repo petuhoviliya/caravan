@@ -10,15 +10,19 @@ import (
 )
 
 const (
-  MaxHitChance int = 95
-  MinDamage    int = 1
+  MaxHitChance    int = 95
+  MinDamage       int = 1
+  MinShieldDamage int = 5
 
-  BaseHealth      int = 50
-  BaseHealthRegen int = 1
-  BaseAttack      int = 20
-  BaseArmor       int = 10
-  BaseHitChance   int = 60
-  BaseEvadeChance int = 5
+  BaseHealth            int = 50
+  BaseHealthRegen       int = 1
+  BaseAttack            int = 20
+  BaseArmor             int = 10
+  BaseHitChance         int = 60
+  BaseEvadeChance       int = 5
+  BaseShieldBlockChance int = 10
+  BaseArmorPiercingChance int = 50
+
 
   VarHealth int = 10
   VarAttack int = 10
