@@ -22,6 +22,7 @@ const TownWarehouseLimit int64 = 1000
 */
 
 var GoodStatus = []string{0:"⇅",1:"↑",2:"↓",3:"↻",4:"↺"}
+var TownStatus = []string{0:"Деревня",1:"Поселок",2:"Город",3:"Столица"}
 
 type Goods struct {
   Id       int

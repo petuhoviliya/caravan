@@ -23,6 +23,12 @@ type TradingGood struct {
   Consumables []Resources
 }
 
+type Manufacturer struct {
+	Id int
+	Tier int
+	Name string
+}
+
 var AlphabetRU = []string{
     "Амурск", "Биробиджан", "Владивосток", "Грозный",
     "Дубна", "Ейск", "Жуковский", "Зеленоград",

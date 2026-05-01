@@ -193,6 +193,7 @@ var (
 
   Towns     map[int]town.Template
   Goods     map[int]common.TradingGood
+  GoodsManufacturer map[int]common.Manufacturer
   Caravan   caravan.Template
   Status    map[string]uint8
   StatusNum map[uint8]string
@@ -281,7 +282,13 @@ func RedrawViewTown() {
 
   for key := 1; key <= len(nextTown.Goods); key++ {
     Price := nextTown.GetGoodPrice(key)
-    txt += fmt.Sprintf("[%s] %s: %d/%d Цена: %f\n",town.GoodStatus[nextTown.Goods[key].Status], Game.Goods[key].Name, nextTown.Goods[key].Quantity, nextTown.WarehouseLimit, Price)
+    txt += fmt.Sprintf("[%s] %s: %d/%d Цена: %f\n",
+      town.GoodStatus[nextTown.Goods[key].Status],
+      Game.Goods[key].Name,
+      nextTown.Goods[key].Quantity,
+      nextTown.WarehouseLimit,
+      Price,
+    )
   }
 
 
@@ -471,16 +478,30 @@ func init() {
   */
   Goods = map[int]common.TradingGood{
     // Id   Tier  Name      PriceMin  PriceMax  Unit        Volume  Weight  Resources  Consumables
-    1:  {1, 1, "Зерно", 2, 5, "мешок", 0.036, 0.050, nil, nil},
-    2:  {2, 1, "Дерево", 3, 5, "кубометр", 1.0, 0.640, nil, nil},
-    3:  {3, 1, "Камень", 1, 2, "кубометр", 1.0, 1.7, nil, nil},
-    4:  {4, 1, "Руда", 4, 9, "тонна", 0.5, 1.0, nil, nil},
-    5:  {5, 2, "Мука", 12, 18, "тонна", 0.5, 1.0, nil, nil},
-    6:  {6, 2, "Доски", 10, 15, "тонна", 0.5, 1.0, nil, nil},
-    7:  {7, 2, "Металл", 10, 14, "тонна", 0.5, 1.0, nil, nil},
-    8:  {8, 3, "Инструменты", 21, 30, "тонна", 0.5, 1.0, nil, nil},
-    9:  {9, 3, "Мебель", 22, 26, "тонна", 0.5, 1.0, nil, nil},
-    10: {10, 3, "Хлеб", 15, 20, "тонна", 0.5, 1.0, nil, nil},
+    1:  {1,   1, "Зерно",       2, 5,   "мешок",     0.036, 0.050, nil, nil},
+    2:  {2,   1, "Дерево",       3, 5,   "кубометр:м³",  1.0, 0.640, nil, nil},
+    3:  {3,   1, "Камень",       1, 2,   "кубометр:м³",  1.0, 1.7, nil, nil},
+    4:  {4,   1, "Руда",         4, 9,   "тонна",     0.5, 1.0, nil, nil},
+    5:  {5,   2, "Мука",         12, 18,  "тонна",     0.5, 1.0, nil, nil},
+    6:  {6,   2, "Доски",       10, 15,  "тонна",     0.5, 1.0, nil, nil},
+    7:  {7,   2, "Металл",       10, 14,  "тонна",     0.5, 1.0, nil, nil},
+    8:  {8,   3, "Инструменты",  21, 30,  "тонна",     0.5, 1.0, nil, nil},
+    9:  {9,   3, "Мебель",       22, 26,  "тонна",     0.5, 1.0, nil, nil},
+    10: {10,   3, "Хлеб",         15, 20,  "тонна",     0.5, 1.0, nil, nil},
+  }
+
+  GoodsManufacturer = map[int]common.Manufacturer {
+    //   Id     Tier Name
+    1:   {1,    1,  "Ферма"},
+    2:   {2,    1,  "Вырубка"},
+    3:   {3,    1,  "Карьер"},
+    4:   {4,    1,  "Шахта"},
+    5:   {5,    2,  "Мельница"},
+    6:   {6,    2,  "Лесопилка"},
+    7:   {7,    2,  "Плавильня"},
+    8:   {8,    3,  "Кузница"},
+    9:   {9,    3,  "Мебельщик"},
+    10: {10,  3,  "Пекарня"},
   }
 
 }
