@@ -1,0 +1,589 @@
+[
+  {
+    "id": 2001,
+    "weapon": "Axe",
+    "str": 8,
+    "speed": 91,
+    "reach": 108,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 32
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.0,
+    "price": 65,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2002,
+    "weapon": "Two Handed Axe",
+    "str": 10,
+    "speed": 96,
+    "reach": 90,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 38
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 90,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2003,
+    "weapon": "Battle Axe",
+    "str": 9,
+    "speed": 88,
+    "reach": 108,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 41
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 5.0,
+    "price": 240,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2004,
+    "weapon": "Sarranid Battle Axe",
+    "str": 10,
+    "speed": 89,
+    "reach": 95,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 49
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 3.0,
+    "price": 350,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields\nUnbalanced"
+  },
+  {
+    "id": 2005,
+    "weapon": "Two Handed War Axe",
+    "str": 10,
+    "speed": 96,
+    "reach": 92,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 44
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 152,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2006,
+    "weapon": "War Axe",
+    "str": 10,
+    "speed": 86,
+    "reach": 110,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 43
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 5.0,
+    "price": 264,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2007,
+    "weapon": "Sarranid War Axe",
+    "str": 10,
+    "speed": 90,
+    "reach": 90,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 46
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 2.5,
+    "price": 280,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields\nUnbalanced"
+  },
+  {
+    "id": 2008,
+    "weapon": "Great Axe",
+    "str": 10,
+    "speed": 94,
+    "reach": 96,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 47
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 316,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields\nUnbalanced"
+  },
+  {
+    "id": 2009,
+    "weapon": "Maul",
+    "str": 11,
+    "speed": 83,
+    "reach": 79,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 36
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 6.0,
+    "price": 97,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Can crush through blocks\nUnbalanced"
+  },
+  {
+    "id": 2010,
+    "weapon": "Sledgehammer",
+    "str": 12,
+    "speed": 81,
+    "reach": 82,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 39
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 7.0,
+    "price": 101,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Can crush through blocks\nUnbalanced"
+  },
+  {
+    "id": 2011,
+    "weapon": "Great Hammer",
+    "str": 14,
+    "speed": 79,
+    "reach": 75,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 45
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 9.0,
+    "price": 290,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Can crush through blocks\nUnbalanced"
+  },
+  {
+    "id": 2012,
+    "weapon": "Iron Mace",
+    "str": null,
+    "speed": 90,
+    "reach": 95,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 35
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 22
+    },
+    "weight": 4.5,
+    "price": 470,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Can crush through blocks\nUnbalanced"
+  },
+  {
+    "id": 2013,
+    "weapon": "Shortened Military Scythe",
+    "str": 10,
+    "speed": 90,
+    "reach": 112,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 45
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 3.0,
+    "price": 264,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2014,
+    "weapon": "Voulge",
+    "str": 8,
+    "speed": 87,
+    "reach": 119,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 35
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 129,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2015,
+    "weapon": "Shortened Voulge",
+    "str": 10,
+    "speed": 92,
+    "reach": 100,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 45
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 228,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields"
+  },
+  {
+    "id": 2016,
+    "weapon": "Bardiche",
+    "str": 10,
+    "speed": 91,
+    "reach": 102,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 47
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.8,
+    "price": 291,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields\nUnbalanced"
+  },
+  {
+    "id": 2017,
+    "weapon": "Great Bardiche",
+    "str": 10,
+    "speed": 89,
+    "reach": 116,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 50
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 5.0,
+    "price": 617,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Bonus against shields\nUnbalanced"
+  },
+  {
+    "id": 2018,
+    "weapon": "Sword of War",
+    "str": 11,
+    "speed": 94,
+    "reach": 130,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 40
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 31
+    },
+    "weight": 3.0,
+    "price": 524,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2019,
+    "weapon": "Two Handed Sword",
+    "str": 10,
+    "speed": 97,
+    "reach": 110,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 40
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 28
+    },
+    "weight": 2.8,
+    "price": 670,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2020,
+    "weapon": "Great Sword",
+    "str": 10,
+    "speed": 95,
+    "reach": 125,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 39
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 31
+    },
+    "weight": 2.8,
+    "price": 423,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2021,
+    "weapon": "Great Sword",
+    "str": 10,
+    "speed": 96,
+    "reach": 120,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 42
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 29
+    },
+    "weight": 2.8,
+    "price": 1123,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2022,
+    "weapon": "Strange Great Sword",
+    "str": 11,
+    "speed": 92,
+    "reach": 125,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 38
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 3.5,
+    "price": 920,
+    "modifiers": [],
+    "other": "Part of the strange set"
+  },
+  {
+    "id": 2023,
+    "weapon": "Two Handed Sabre",
+    "str": 10,
+    "speed": 96,
+    "reach": 120,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 40
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 2.8,
+    "price": 523,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2024,
+    "weapon": "Two Handed Sabre",
+    "str": 10,
+    "speed": 96,
+    "reach": 120,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 44
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 2.8,
+    "price": 920,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 2025,
+    "weapon": "War Cleaver",
+    "str": 10,
+    "speed": 93,
+    "reach": 120,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 45
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 2.8,
+    "price": 640,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  }
+]
