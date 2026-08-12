@@ -1,26 +1,26 @@
 [
   {
-    "id":"str",
-    "name":"Сила",
-    "description":"",
-    "baseValue":5
+    "id": "str",
+    "name": "Сила",
+    "description": "",
+    "baseValue": 5
   },
   {
-    "id":"agi",
-    "name":"Ловкость",
-    "description":"",
-    "baseValue":5
+    "id": "agi",
+    "name": "Ловкость",
+    "description": "",
+    "baseValue": 5
   },
   {
-    "id":"int",
-    "name":"Интеллект",
-    "description":"",
-    "baseValue":5
+    "id": "int",
+    "name": "Интеллект",
+    "description": "",
+    "baseValue": 5
   },
   {
-    "id":"cha",
-    "name":"Харизма",
-    "description":"",
-    "baseValue":5
+    "id": "cha",
+    "name": "Харизма",
+    "description": "",
+    "baseValue": 5
   }
-]  
+]

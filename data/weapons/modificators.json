@@ -1,0 +1,241 @@
+{
+  "weapon": [
+    {
+      "id": "masterwork",
+      "name": "Мастерский",
+      "requirement": 5,
+      "damage": 5,
+      "speed": 1,
+      "price": 16.5
+    },
+    {
+      "id": "tempered",
+      "name": "Закаленный",
+      "requirement": 0,
+      "damage": 4,
+      "speed": 0,
+      "price": 6.7
+    },
+    {
+      "id": "balanced",
+      "name": "Сбалансированный",
+      "requirement": 0,
+      "damage": 3,
+      "speed": 3,
+      "price": 2.5
+    },
+    {
+      "id": "heavy",
+      "name": "Утяжелённый",
+      "requirement": 1,
+      "damage": 2,
+      "speed": -2,
+      "price": 0.9
+    },
+    {
+      "id": "chipped",
+      "name": "Сколотый",
+      "requirement": 0,
+      "damage": -1,
+      "speed": 0,
+      "price": 0.72
+    },
+    {
+      "id": "rusty",
+      "name": "Ржавый",
+      "requirement": 0,
+      "damage": -3,
+      "speed": 0,
+      "price": 0.65
+    },
+    {
+      "id": "bent",
+      "name": "Погнутый",
+      "requirement": 0,
+      "damage": -3,
+      "speed": -3,
+      "price": 0.55
+    },
+    {
+      "id": "cracked",
+      "name": "Сломанный",
+      "requirement": 0,
+      "damage": -5,
+      "speed": -5,
+      "price": 0.5
+    }
+  ],
+  "bow": [
+    {
+      "id": "masterwork",
+      "name": "Мастерский",
+      "requirement": 4,
+      "damage": 5,
+      "speed": 1,
+      "price": 16.5
+    },
+    {
+      "id": "strong",
+      "name": "Крепкий",
+      "requirement": 2,
+      "damage": 3,
+      "speed": -3,
+      "price": 3.6
+    },
+    {
+      "id": "bent",
+      "name": "Погнутый",
+      "requirement": 0,
+      "damage": -3,
+      "speed": -3,
+      "price": 0.65
+    },
+    {
+      "id": "cracked",
+      "name": "Сломанный",
+      "requirement": 0,
+      "damage": -5,
+      "speed": 0,
+      "price": 0.5
+    }
+  ],
+  "crossbow": [
+    {
+      "id": "masterwork",
+      "name": "Мастерский",
+      "requirement": 4,
+      "damage": 5,
+      "speed": 1,
+      "price": 16.5
+    },
+    {
+      "id": "bent",
+      "name": "Погнутый",
+      "requirement": 0,
+      "damage": -3,
+      "speed": -3,
+      "price": 0.65
+    },
+    {
+      "id": "cracked",
+      "name": "Сломанный",
+      "requirement": 0,
+      "damage": -5,
+      "speed": 0,
+      "price": 0.5
+    }
+  ],
+  "armor": [
+    {
+      "id": "lordly",
+      "name": "Благородный",
+      "armor": 6,
+      "price": 11.5,
+      "requirement": 0
+    },
+    {
+      "id": "reinforced",
+      "name": "Усиленный",
+      "armor": 4,
+      "price": 6.5,
+      "requirement": 0
+    },
+    {
+      "id": "hardened",
+      "name": "Закаленный",
+      "armor": 3,
+      "price": 3.9,
+      "requirement": 0
+    },
+    {
+      "id": "thick",
+      "name": "Толстый",
+      "armor": 2,
+      "price": 2.6,
+      "requirement": 0
+    },
+    {
+      "id": "sturdy",
+      "name": "Прочный",
+      "armor": 1,
+      "price": 1.7,
+      "requirement": 0
+    },
+    {
+      "id": "crude",
+      "name": "Грубый",
+      "armor": -1,
+      "price": 0.83,
+      "requirement": 0
+    },
+    {
+      "id": "battered",
+      "name": "Побитый",
+      "armor": -2,
+      "price": 0.75,
+      "requirement": 0
+    },
+    {
+      "id": "ragged",
+      "name": "Рваный",
+      "armor": -2,
+      "price": 0.7,
+      "requirement": 0
+    },
+    {
+      "id": "rusty",
+      "name": "Ржавый",
+      "armor": -3,
+      "price": 0.55,
+      "requirement": 0
+    },
+    {
+      "id": "tattered",
+      "name": "Изношенный",
+      "armor": -3,
+      "price": 0.5,
+      "requirement": 0
+    },
+    {
+      "id": "cracked",
+      "name": "Сломанный",
+      "armor": -4,
+      "price": 0.5,
+      "requirement": 0
+    }
+  ],
+  "shield": [
+    {
+      "id": "reinforced",
+      "name": "Усиленный",
+      "durability": 83,
+      "resistance": 4,
+      "price": 5.5,
+      "requirement": 0
+    },
+    {
+      "id": "thick",
+      "name": "Утолщенный",
+      "durability": 47,
+      "resistance": 2,
+      "price": 1.6,
+      "requirement": 0
+    },
+    {
+      "id": "battered",
+      "name": "Потертый",
+      "durability": -26,
+      "resistance": -2,
+      "price": 0.75,
+      "requirement": 0
+    },
+    {
+      "id": "cracked",
+      "name": "Треснутый",
+      "durability": -56,
+      "resistance": -4,
+      "price": 0.5,
+      "requirement": 0
+    }
+  ]
+}

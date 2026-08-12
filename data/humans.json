@@ -1,18 +1,73 @@
 {
-  "types":[
-    "outlaw","guards","army","militia","peasant"
-  ],
-  "ranks":[
-    "новичок","обученный","ветеран","главарь"
-  ],
-  "templates":[
+  "types": [
     {
-      "id":"rogue",
-      "name":"Разбойник",
-      "description":"",
-      "grade":1,
-      "stats":{},
-      "loot":[]
+      "id": "outlaw",
+      "name": "",
+      "description": "",
+      "ranks": []
+    },
+    {
+      "id": "guards",
+      "name": "",
+      "description": "",
+      "ranks": []
+    },
+    {
+      "id": "army",
+      "name": "",
+      "description": "",
+      "ranks": []
+    },
+    {
+      "id": "militia",
+      "name": "",
+      "description": "",
+      "ranks": []
+    },
+    {
+      "id": "peasant",
+      "name": "",
+      "description": "",
+      "ranks": []
+    }
+  ],
+  "ranks": [
+    {
+      "id": "newbie",
+      "name": "Новичок",
+      "description": ""
+    },
+    {
+      "id": "trained",
+      "name": "Обученный",
+      "description": ""
+    },
+    {
+      "id": "vateran",
+      "name": "Ветеран",
+      "description": ""
+    },
+    {
+      "id": "leader",
+      "name": "Главарь",
+      "description": ""
+    }
+  ],
+  "templates": [
+    {
+      "id": "rogue",
+      "name": "Разбойник",
+      "description": "",
+      "type": "outlaw",
+      "ranks": [
+        "newbie",
+        "trained",
+        "veteran"
+      ],
+      "grade": 1,
+      "stats": {},
+      "commonLoot": true,
+      "loot": []
     }
   ]
 }

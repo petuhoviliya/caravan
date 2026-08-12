@@ -35,7 +35,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 7,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -87,7 +91,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 13,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -113,7 +121,12 @@
     "Thrust": "13 (pierce)",
     "Weight": 0.5,
     "Price": 18,
-    "Modifiers": ["Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Can't be used to block"
   },
   {
@@ -126,7 +139,12 @@
     "Thrust": "17 (pierce)",
     "Weight": 0.8,
     "Price": 23,
-    "Modifiers": ["Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Can't be used to block"
   },
   {
@@ -139,7 +157,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 24,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -152,7 +174,12 @@
     "Thrust": null,
     "Weight": 3.0,
     "Price": 27,
-    "Modifiers": ["Balanced", "Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Balanced",
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -165,7 +192,13 @@
     "Thrust": "19 (pierce)",
     "Weight": 0.8,
     "Price": 37,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Can't be used to block"
   },
   {
@@ -178,7 +211,11 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 45,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -191,7 +228,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 45,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -204,7 +245,11 @@
     "Thrust": null,
     "Weight": 2.5,
     "Price": 77,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -217,7 +262,11 @@
     "Thrust": null,
     "Weight": 3.0,
     "Price": 83,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -230,7 +279,11 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 87,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -243,7 +296,11 @@
     "Thrust": null,
     "Weight": 2.5,
     "Price": 98,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -256,7 +313,12 @@
     "Thrust": null,
     "Weight": 2.5,
     "Price": 105,
-    "Modifiers": ["Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -269,7 +331,13 @@
     "Thrust": null,
     "Weight": 1.3,
     "Price": 105,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -282,7 +350,12 @@
     "Thrust": null,
     "Weight": 1.0,
     "Price": 108,
-    "Modifiers": ["Balanced", "Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Balanced",
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -295,7 +368,13 @@
     "Thrust": "19 (pierce)",
     "Weight": 1.5,
     "Price": 108,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -308,7 +387,11 @@
     "Thrust": null,
     "Weight": 3.5,
     "Price": 122,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -321,7 +404,11 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 142,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -334,7 +421,13 @@
     "Thrust": "20 (pierce)",
     "Weight": 1.5,
     "Price": 147,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -347,7 +440,11 @@
     "Thrust": null,
     "Weight": 2.8,
     "Price": 152,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -360,7 +457,13 @@
     "Thrust": "24 (pierce)",
     "Weight": 1.0,
     "Price": 152,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -373,7 +476,13 @@
     "Thrust": "21 (pierce)",
     "Weight": 1.3,
     "Price": 162,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -386,7 +495,13 @@
     "Thrust": "22 (pierce)",
     "Weight": 1.5,
     "Price": 163,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -399,7 +514,12 @@
     "Thrust": null,
     "Weight": 3.5,
     "Price": 180,
-    "Modifiers": ["Balanced", "Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Balanced",
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -412,7 +532,11 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 190,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -425,7 +549,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 191,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -438,7 +568,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 193,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -451,7 +587,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 210,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -464,7 +606,11 @@
     "Thrust": null,
     "Weight": 2.5,
     "Price": 212,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -477,7 +623,13 @@
     "Thrust": "19 (pierce)",
     "Weight": 1.5,
     "Price": 218,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -490,7 +642,11 @@
     "Thrust": null,
     "Weight": 1.0,
     "Price": 220,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -503,7 +659,11 @@
     "Thrust": null,
     "Weight": 1.8,
     "Price": 230,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -516,7 +676,13 @@
     "Thrust": "23 (pierce)",
     "Weight": 1.5,
     "Price": 243,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -529,7 +695,13 @@
     "Thrust": "24 (pierce)",
     "Weight": 1.0,
     "Price": 243,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -542,7 +714,11 @@
     "Thrust": null,
     "Weight": 1.8,
     "Price": 250,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -555,7 +731,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 263,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -568,7 +750,13 @@
     "Thrust": "21 (pierce)",
     "Weight": 1.5,
     "Price": 276,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -581,7 +769,12 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 280,
-    "Modifiers": ["Balanced", "Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Balanced",
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -594,7 +787,13 @@
     "Thrust": "21 (pierce)",
     "Weight": 1.3,
     "Price": 280,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -607,7 +806,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 290,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -620,7 +825,13 @@
     "Thrust": null,
     "Weight": 1.5,
     "Price": 294,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -633,7 +844,13 @@
     "Thrust": "19 (pierce)",
     "Weight": 1.5,
     "Price": 310,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -646,7 +863,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 317,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -672,7 +893,11 @@
     "Thrust": null,
     "Weight": 1.8,
     "Price": 360,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -685,7 +910,13 @@
     "Thrust": null,
     "Weight": 1.8,
     "Price": 384,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -698,7 +929,13 @@
     "Thrust": "21 (pierce)",
     "Weight": 1.5,
     "Price": 394,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -711,7 +948,13 @@
     "Thrust": "24 (pierce)",
     "Weight": 1.5,
     "Price": 410,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -724,7 +967,13 @@
     "Thrust": "20 (pierce)",
     "Weight": 1.5,
     "Price": 420,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -737,7 +986,13 @@
     "Thrust": "28 (pierce)",
     "Weight": 1.5,
     "Price": 480,
-    "Modifiers": ["Masterwork", "Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Masterwork",
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   },
   {
@@ -750,7 +1005,11 @@
     "Thrust": null,
     "Weight": 2.0,
     "Price": 550,
-    "Modifiers": ["Heavy", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Heavy",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": "Bonus against shields"
   },
   {
@@ -763,7 +1022,12 @@
     "Thrust": "28 (pierce)",
     "Weight": 1.8,
     "Price": 550,
-    "Modifiers": ["Tempered", "Balanced", "Chipped", "Rusty"],
+    "Modifiers": [
+      "Tempered",
+      "Balanced",
+      "Chipped",
+      "Rusty"
+    ],
     "Other": null
   }
 ]

@@ -1,8 +1,5 @@
-
-
-
-[
-  "list":[
+{
+  "list": [
     "Очки здоровья",
     "Запас выносливости",
     "Переносимый вес",
@@ -11,23 +8,20 @@
     "Использование припасов",
     "Обзор"
   ],
-  {
-    "id":"attack",
-    "name":"Бонус атаки",
-    "description":"Шанс попасть по противнику",
-    "formula":[
+  "stats": {
+    "id": "attack",
+    "name": "Бонус атаки",
+    "description": "Шанс попасть по противнику",
+    "formula": [
       {
-        "type":"base",
-        "value":"0"
+        "type": "base",
+        "value": "0"
       },
       {
-        "type":"from-attributs",
-        "attr":"agi",
-        "value":1
+        "type": "from-attributs",
+        "attr": "agi",
+        "value": 1
       }
     ]
-
   }
-
-
-]
+}
