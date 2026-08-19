@@ -1,0 +1,117 @@
+[
+  {
+    "id": 3001,
+    "weapon": "Bastard Sword",
+    "str": 9,
+    "speed": 98,
+    "reach": 101,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 35
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 26
+    },
+    "weight": 2.0,
+    "price": 294,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 3002,
+    "weapon": "heavy Bastard Sword",
+    "str": 9,
+    "speed": 96,
+    "reach": 105,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 37
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 27
+    },
+    "weight": 2.3,
+    "price": 526,
+    "modifiers": [
+      "masterwork",
+      "tempered",
+      "balanced",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 3003,
+    "weapon": "Morningstar",
+    "str": 13,
+    "speed": 95,
+    "reach": 85,
+    "swing": {
+      "damageType": "pierce",
+      "damageValue": 38
+    },
+    "thrust": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "weight": 4.5,
+    "price": 305,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": "Can crush through blocks\nUnbalanced"
+  },
+  {
+    "id": 3004,
+    "weapon": "Spiked Staff",
+    "str": 9,
+    "speed": 95,
+    "reach": 117,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 24
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 20
+    },
+    "weight": 2.5,
+    "price": 200,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": ""
+  },
+  {
+    "id": 3005,
+    "weapon": "Strange Sword",
+    "str": 9,
+    "speed": 108,
+    "reach": 95,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 32
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 18
+    },
+    "weight": 2.0,
+    "price": 679,
+    "modifiers": [],
+    "other": "Part of the strange set"
+  }
+]

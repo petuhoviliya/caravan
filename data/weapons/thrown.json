@@ -1,0 +1,360 @@
+[
+  {
+    "id": 7701,
+    "weapon": "Stones",
+    "stack_amount": 18,
+    "power_throw": null,
+    "throw_damage": {
+      "damageType": "blunt",
+      "damageValue": 11
+    },
+    "attack_damage": [],
+    "attack_speed": [
+      {
+        "attackType": "blunt",
+        "attackSpeed": 97
+      }
+    ],
+    "missile_speed": 30,
+    "weight": 4.0,
+    "price": 1,
+    "modifiers": [
+      "large bag"
+    ]
+  },
+  {
+    "id": 7702,
+    "weapon": "Throwing Knives",
+    "stack_amount": 14,
+    "power_throw": null,
+    "throw_damage": {
+      "damageType": "cut",
+      "damageValue": 19
+    },
+    "attack_damage": [],
+    "attack_speed": [
+      {
+        "attackType": "cut",
+        "attackSpeed": 121
+      }
+    ],
+    "missile_speed": 25,
+    "weight": 3.5,
+    "price": 76,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7703,
+    "weapon": "Throwing Daggers",
+    "stack_amount": 13,
+    "power_throw": null,
+    "throw_damage": {
+      "damageType": "cut",
+      "damageValue": 25
+    },
+    "attack_damage": [],
+    "attack_speed": [
+      {
+        "attackType": "cut",
+        "attackSpeed": 110
+      }
+    ],
+    "missile_speed": 24,
+    "weight": 3.5,
+    "price": 193,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7704,
+    "weapon": "Darts",
+    "stack_amount": 7,
+    "power_throw": 1,
+    "throw_damage": {
+      "damageType": "pierce",
+      "damageValue": 22
+    },
+    "attack_damage": [],
+    "attack_speed": [
+      {
+        "attackType": "pierce",
+        "attackSpeed": 95
+      }
+    ],
+    "missile_speed": 28,
+    "weight": 5.0,
+    "price": 155,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7705,
+    "weapon": "War Darts",
+    "stack_amount": 7,
+    "power_throw": 1,
+    "throw_damage": {
+      "damageType": "pierce",
+      "damageValue": 25
+    },
+    "attack_damage": [],
+    "attack_speed": [
+      {
+        "attackType": "pierce",
+        "attackSpeed": 93
+      }
+    ],
+    "missile_speed": 27,
+    "weight": 5.0,
+    "price": 285,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7706,
+    "weapon": "Javelins",
+    "stack_amount": 5,
+    "power_throw": 1,
+    "throw_damage": {
+      "damageType": "pierce",
+      "damageValue": 34
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 12
+      },
+      {
+        "attackType": "thrust",
+        "damageType": "pierce",
+        "damageValue": 14
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 91
+      },
+      {
+        "attackType": "thrust",
+        "attackSpeed": 95
+      }
+    ],
+    "missile_speed": 25,
+    "weight": 5.0,
+    "price": 300,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7707,
+    "weapon": "Throwing Spears",
+    "stack_amount": 4,
+    "power_throw": 2,
+    "throw_damage": {
+      "damageType": "pierce",
+      "damageValue": 44
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 18
+      },
+      {
+        "attackType": "thrust",
+        "damageType": "pierce",
+        "damageValue": 23
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 87
+      },
+      {
+        "attackType": "thrust",
+        "attackSpeed": 91
+      }
+    ],
+    "missile_speed": 22,
+    "weight": 4.0,
+    "price": 525,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7708,
+    "weapon": "Jarids",
+    "stack_amount": 4,
+    "power_throw": 2,
+    "throw_damage": {
+      "damageType": "pierce",
+      "damageValue": 45
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 16
+      },
+      {
+        "attackType": "thrust",
+        "damageType": "pierce",
+        "damageValue": 20
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 89
+      },
+      {
+        "attackType": "thrust",
+        "attackSpeed": 93
+      }
+    ],
+    "missile_speed": 24,
+    "weight": 4.0,
+    "price": 560,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "heavy",
+      "bent"
+    ]
+  },
+  {
+    "id": 7709,
+    "weapon": "Light Throwing Axes",
+    "stack_amount": 4,
+    "power_throw": 2,
+    "throw_damage": {
+      "damageType": "cut",
+      "damageValue": 35
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 26
+      },
+      {
+        "attackType": "thrust",
+        "damageType": null,
+        "damageValue": null
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 99
+      }
+    ],
+    "missile_speed": 18,
+    "weight": 5.0,
+    "price": 360,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "bent"
+    ]
+  },
+  {
+    "id": 7710,
+    "weapon": "Throwing Axes",
+    "stack_amount": 4,
+    "power_throw": 3,
+    "throw_damage": {
+      "damageType": "cut",
+      "damageValue": 39
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 29
+      },
+      {
+        "attackType": "thrust",
+        "damageType": null,
+        "damageValue": null
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 98
+      }
+    ],
+    "missile_speed": 18,
+    "weight": 5.0,
+    "price": 490,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "bent"
+    ]
+  },
+  {
+    "id": 7711,
+    "weapon": "Heavy Throwing Axes",
+    "stack_amount": 4,
+    "power_throw": 4,
+    "throw_damage": {
+      "damageType": "cut",
+      "damageValue": 44
+    },
+    "attack_damage": [
+      {
+        "attackType": "swing",
+        "damageType": "cut",
+        "damageValue": 32
+      },
+      {
+        "attackType": "thrust",
+        "damageType": null,
+        "damageValue": null
+      }
+    ],
+    "attack_speed": [
+      {
+        "attackType": "swing",
+        "attackSpeed": 97
+      }
+    ],
+    "missile_speed": 18,
+    "weight": 5.0,
+    "price": 620,
+    "modifiers": [
+      "large bag",
+      "balanced",
+      "bent"
+    ]
+  }
+]

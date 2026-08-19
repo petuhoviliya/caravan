@@ -1,0 +1,110 @@
+[
+  {
+    "id": 6001,
+    "weapon": "Long Axe",
+    "str": 10,
+    "speed": {
+      "pole": 93,
+      "2h": 88
+    },
+    "reach": 120,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 46
+    },
+    "thrust": {
+      "pole": {
+        "damageType": "blunt",
+        "damageValue": 19
+      },
+      "2h": {
+        "damageType": "none",
+        "damageValue": null
+      }
+    },
+    "weight": 4.75,
+    "price": 390,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "unbalanced",
+      "no shield"
+    ]
+  },
+  {
+    "id": 6002,
+    "weapon": "Long War Axe",
+    "str": 10,
+    "speed": {
+      "pole": 92,
+      "2h": 87
+    },
+    "reach": 125,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 50
+    },
+    "thrust": {
+      "pole": {
+        "damageType": "blunt",
+        "damageValue": 18
+      },
+      "2h": {
+        "damageType": "none",
+        "damageValue": null
+      }
+    },
+    "weight": 5.0,
+    "price": 510,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "unbalanced",
+      "no shield"
+    ]
+  },
+  {
+    "id": 6003,
+    "weapon": "Great Long Axe",
+    "str": 10,
+    "speed": {
+      "pole": 91,
+      "2h": 85
+    },
+    "reach": 127,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 54
+    },
+    "thrust": {
+      "pole": {
+        "damageType": "blunt",
+        "damageValue": 19
+      },
+      "2h": {
+        "damageType": "none",
+        "damageValue": null
+      }
+    },
+    "weight": 5.5,
+    "price": 660,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "unbalanced",
+      "no shield"
+    ]
+  }
+]

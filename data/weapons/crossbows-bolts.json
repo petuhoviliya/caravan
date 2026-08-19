@@ -1,0 +1,136 @@
+{
+  "crossbows": [
+    {
+      "id": 7501,
+      "weapon": "Hunting Crossbow",
+      "str": null,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 37
+      },
+      "accuracy": 99,
+      "attack_speed": 47,
+      "missile_speed": 50,
+      "weight": 2.3,
+      "price": 22,
+      "modifiers": [
+        "masterwork",
+        "bent",
+        "cracked"
+      ],
+      "other": null
+    },
+    {
+      "id": 7502,
+      "weapon": "Light Crossbow",
+      "str": 8,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 44
+      },
+      "accuracy": 99,
+      "attack_speed": 45,
+      "missile_speed": 59,
+      "weight": 2.5,
+      "price": 67,
+      "modifiers": [
+        "masterwork",
+        "bent",
+        "cracked"
+      ],
+      "other": "Cannot be used on horseback"
+    },
+    {
+      "id": 7503,
+      "weapon": "Crossbow",
+      "str": 8,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 49
+      },
+      "accuracy": 99,
+      "attack_speed": 43,
+      "missile_speed": 66,
+      "weight": 3.0,
+      "price": 182,
+      "modifiers": [
+        "masterwork",
+        "bent",
+        "cracked"
+      ],
+      "other": "Cannot be used on horseback"
+    },
+    {
+      "id": 7504,
+      "weapon": "Heavy Crossbow",
+      "str": 9,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 58
+      },
+      "accuracy": 99,
+      "attack_speed": 41,
+      "missile_speed": 68,
+      "weight": 3.5,
+      "price": 349,
+      "modifiers": [
+        "masterwork",
+        "bent",
+        "cracked"
+      ],
+      "other": "Cannot be used on horseback"
+    },
+    {
+      "id": 7505,
+      "weapon": "Siege Crossbow",
+      "str": 10,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 63
+      },
+      "accuracy": 99,
+      "attack_speed": 37,
+      "missile_speed": 70,
+      "weight": 3.8,
+      "price": 683,
+      "modifiers": [
+        "masterwork",
+        "bent",
+        "cracked"
+      ],
+      "other": "Cannot be used on horseback"
+    }
+  ],
+  "bolts": [
+    {
+      "id": 7601,
+      "projectile": "Bolts",
+      "stack_amount": 29,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 1
+      },
+      "weight": 2.3,
+      "price": 64,
+      "modifiers": [
+        "large bag",
+        "bent"
+      ]
+    },
+    {
+      "id": 7602,
+      "projectile": "Steel Bolts",
+      "stack_amount": 29,
+      "damage": {
+        "damagetype": "pierce",
+        "damagevalue": 2
+      },
+      "weight": 2.5,
+      "price": 210,
+      "modifiers": [
+        "large bag",
+        "bent"
+      ]
+    }
+  ]
+}

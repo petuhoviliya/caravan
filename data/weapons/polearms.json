@@ -1,0 +1,847 @@
+[
+  {
+    "id": 4001,
+    "weapon": "Pitch Fork",
+    "str": null,
+    "speed": 87,
+    "reach": 154,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 16
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 22
+    },
+    "weight": 1.5,
+    "price": 19,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4002,
+    "weapon": "Military Fork",
+    "str": null,
+    "speed": 95,
+    "reach": 135,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 15
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 30
+    },
+    "weight": 2.0,
+    "price": 153,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4003,
+    "weapon": "Battle Fork",
+    "str": null,
+    "speed": 90,
+    "reach": 144,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 15
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 35
+    },
+    "weight": 2.0,
+    "price": 282,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4004,
+    "weapon": "Staff",
+    "str": null,
+    "speed": 100,
+    "reach": 130,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 18
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 19
+    },
+    "weight": 1.5,
+    "price": 36,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4005,
+    "weapon": "Quarter Staff",
+    "str": null,
+    "speed": 104,
+    "reach": 140,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "weight": 2.0,
+    "price": 60,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4006,
+    "weapon": "Iron Staff",
+    "str": null,
+    "speed": 97,
+    "reach": 140,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 25
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 26
+    },
+    "weight": 2.0,
+    "price": 202,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4007,
+    "weapon": "Scythe",
+    "str": null,
+    "speed": 97,
+    "reach": 182,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 30
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 14
+    },
+    "weight": 2.0,
+    "price": 43,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4008,
+    "weapon": "Military Scythe",
+    "str": null,
+    "speed": 87,
+    "reach": 155,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 36
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 25
+    },
+    "weight": 2.5,
+    "price": 155,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4009,
+    "weapon": "Hafted Blade",
+    "str": null,
+    "speed": 95,
+    "reach": 135,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 37
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 20
+    },
+    "weight": 2.8,
+    "price": 185,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield",
+      "hafted blade"
+    ]
+  },
+  {
+    "id": 4010,
+    "weapon": "Hafted Blade",
+    "str": null,
+    "speed": 93,
+    "reach": 153,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 39
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 19
+    },
+    "weight": 3.3,
+    "price": 350,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield",
+      "hafted blade"
+    ]
+  },
+  {
+    "id": 4011,
+    "weapon": "Glaive",
+    "str": null,
+    "speed": 90,
+    "reach": 157,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 39
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 21
+    },
+    "weight": 4.5,
+    "price": 352,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield"
+    ]
+  },
+  {
+    "id": 4012,
+    "weapon": "Poleaxe",
+    "str": 13,
+    "speed": 77,
+    "reach": 180,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 50
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 15
+    },
+    "weight": 4.5,
+    "price": 384,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield"
+    ]
+  },
+  {
+    "id": 4013,
+    "weapon": "Shortened Spear",
+    "str": null,
+    "speed": 102,
+    "reach": 120,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 19
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 25
+    },
+    "weight": 2.0,
+    "price": 53,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4014,
+    "weapon": "Boar Spear",
+    "str": null,
+    "speed": 90,
+    "reach": 157,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 26
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 23
+    },
+    "weight": 1.5,
+    "price": 76,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4015,
+    "weapon": "Bamboo Spear",
+    "str": null,
+    "speed": 88,
+    "reach": 200,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 15
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 20
+    },
+    "weight": 2.0,
+    "price": 80,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4016,
+    "weapon": "Spear",
+    "str": null,
+    "speed": 98,
+    "reach": 135,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 26
+    },
+    "weight": 2.3,
+    "price": 85,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4017,
+    "weapon": "War Spear",
+    "str": null,
+    "speed": 95,
+    "reach": 150,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 27
+    },
+    "weight": 2.5,
+    "price": 140,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4018,
+    "weapon": "Pike",
+    "str": null,
+    "speed": 81,
+    "reach": 245,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 16
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 26
+    },
+    "weight": 3.0,
+    "price": 125,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield",
+      "cannot be used on horseback"
+    ]
+  },
+  {
+    "id": 4019,
+    "weapon": "Ashwood Pike",
+    "str": 9,
+    "speed": 90,
+    "reach": 170,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 19
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 29
+    },
+    "weight": 3.5,
+    "price": 205,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield"
+    ]
+  },
+  {
+    "id": 4020,
+    "weapon": "Awlpike",
+    "str": null,
+    "speed": 92,
+    "reach": 165,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 33
+    },
+    "weight": 2.3,
+    "price": 345,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4021,
+    "weapon": "Long Awlpike",
+    "str": null,
+    "speed": 89,
+    "reach": 185,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 32
+    },
+    "weight": 2.3,
+    "price": 385,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": []
+  },
+  {
+    "id": 4022,
+    "weapon": "Jousting Lance",
+    "str": null,
+    "speed": 61,
+    "reach": 240,
+    "swing": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 17
+    },
+    "weight": 5.0,
+    "price": 158,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4023,
+    "weapon": "Light Lance",
+    "str": null,
+    "speed": 85,
+    "reach": 175,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 16
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 27
+    },
+    "weight": 2.5,
+    "price": 180,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4024,
+    "weapon": "Double Sided Lance",
+    "str": null,
+    "speed": 95,
+    "reach": 128,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 25
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 27
+    },
+    "weight": 4.0,
+    "price": 261,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4025,
+    "weapon": "Lance",
+    "str": null,
+    "speed": 80,
+    "reach": 180,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 16
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 26
+    },
+    "weight": 2.5,
+    "price": 270,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4026,
+    "weapon": "Heavy Lance",
+    "str": 10,
+    "speed": 75,
+    "reach": 190,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 16
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 26
+    },
+    "weight": 2.8,
+    "price": 360,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4027,
+    "weapon": "Great Lance",
+    "str": 11,
+    "speed": 55,
+    "reach": 240,
+    "swing": {
+      "damageType": "none",
+      "damageValue": null
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 21
+    },
+    "weight": 5.0,
+    "price": 410,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "couched lance damage"
+    ]
+  },
+  {
+    "id": 4028,
+    "weapon": "War Hammer",
+    "str": null,
+    "speed": 81,
+    "reach": 120,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 38
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 38
+    },
+    "weight": 3.0,
+    "price": 125,
+    "modifiers": [
+      "balanced",
+      "bent",
+      "cracked"
+    ],
+    "other": [
+      "no shield",
+      "cannot be used on horseback"
+    ]
+  },
+  {
+    "id": 4029,
+    "weapon": "Polehammer",
+    "str": 18,
+    "speed": 50,
+    "reach": 126,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 50
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 35
+    },
+    "weight": 7.0,
+    "price": 169,
+    "modifiers": [],
+    "other": [
+      "no shield",
+      "cheats only"
+    ]
+  },
+  {
+    "id": 4030,
+    "weapon": "Long Spiked Club",
+    "str": null,
+    "speed": 96,
+    "reach": 126,
+    "swing": {
+      "damageType": "pierce",
+      "damageValue": 23
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 20
+    },
+    "weight": 2.5,
+    "price": 264,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": []
+  },
+  {
+    "id": 4031,
+    "weapon": "Long Hafted Spiked Mace",
+    "str": null,
+    "speed": 94,
+    "reach": 140,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 28
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 26
+    },
+    "weight": 2.5,
+    "price": 310,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": []
+  },
+  {
+    "id": 4032,
+    "weapon": "Long Hafted Knobbed Mace",
+    "str": null,
+    "speed": 95,
+    "reach": 133,
+    "swing": {
+      "damageType": "blunt",
+      "damageValue": 26
+    },
+    "thrust": {
+      "damageType": "blunt",
+      "damageValue": 23
+    },
+    "weight": 3.0,
+    "price": 324,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": []
+  },
+  {
+    "id": 4033,
+    "weapon": "Voulge",
+    "str": 10,
+    "speed": 88,
+    "reach": 175,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 40
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 18
+    },
+    "weight": 3.0,
+    "price": 129,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "no shield"
+    ]
+  },
+  {
+    "id": 4034,
+    "weapon": "Long Bardiche",
+    "str": 11,
+    "speed": 89,
+    "reach": 140,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 48
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 17
+    },
+    "weight": 4.5,
+    "price": 390,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "no shield",
+      "unbalanced"
+    ]
+  },
+  {
+    "id": 4035,
+    "weapon": "Great Long Bardiche",
+    "str": 12,
+    "speed": 88,
+    "reach": 155,
+    "swing": {
+      "damageType": "cut",
+      "damageValue": 50
+    },
+    "thrust": {
+      "damageType": "pierce",
+      "damageValue": 17
+    },
+    "weight": 5.0,
+    "price": 660,
+    "modifiers": [
+      "heavy",
+      "chipped",
+      "rusty"
+    ],
+    "other": [
+      "bonus against shields",
+      "no shield",
+      "unbalanced"
+    ]
+  }
+]

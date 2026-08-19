@@ -1,0 +1,21 @@
+[
+  {
+    "id": "onHorseback",
+    "when": [
+      {
+        "type": "position",
+        "value": "onHorseback"
+      }
+    ],
+    "action": [
+      {
+        "type": "attackSpeed",
+        "value": 0.75
+      },
+      {
+        "type": "damage",
+        "value": 0.75
+      }
+    ]
+  }
+]

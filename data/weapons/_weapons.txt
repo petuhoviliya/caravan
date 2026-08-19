@@ -1,0 +1,36 @@
+{
+	"id":123,
+	"name":"Weapon",
+	"description":"...",
+	"isMelee": true,
+	"isTwoHand": false,
+	"isRanged": false,
+	"isThrown": false,
+	"requirements":[
+		{
+			"type":"skill|stat",
+			"characteristic":"",
+			"value":1
+		}
+	],
+	"damage":[
+		{
+			"attackType":"ranged|thrown|swing|thrust"
+			"attackSpeed":99,
+			"attackReach":60,
+			"damageType":"blunt|pierce|cut"
+			"holdType":"one|two"
+		}
+	],
+	"stackAmount":1,
+  "weight": 5.0,
+  "price": 300,
+  "modifiers": [
+    "large bag",
+    "balanced",
+    "heavy",
+    "bent"
+  ],
+	"features":[
+	]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "notForBlock",
+    "name": "",
+    "type": "combat",
+    "action": {
+      "type": "disable",
+      "skill": "block"
+    }
+  },
+  {
+    "id": "couchedLanceDamage",
+    "name": "",
+    "type": "combat",
+    "action": {
+      "type": "enable",
+      "skill": "couchedLanceDamage"
+    }
+  },
+  {
+    "id": "shieldBreaker",
+    "name": "",
+    "type": "combat",
+    "action": {
+      "type": "enable",
+      "skill": "shieldBreaker"
+    }
+  },
+  {
+    "id": "ignoreBlock",
+    "name": "",
+    "type": "combat",
+    "action": {
+      "type": "enable",
+      "skill": "ignoreBlock"
+    }
+  },
+  {
+    "id": "noShield",
+    "name": "",
+    "type": "always",
+    "action": {
+      "type": "enable",
+      "skill": "noShield"
+    }
+  }
+]
