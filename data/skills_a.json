@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "types": [
+      "party",
+      "leader",
+      "personal"
+    ],
+    "effectTypes": [
+      "statBonus",
+      "damageBonus"
+    ],
+    "list": [
+      {
+        "id": "ironflesh",
+        "name": "Ironflesh",
+        "description": "",
+        "type": "personal",
+        "attribute": "str",
+        "effects": {
+          "type": "stat",
+          "typeValue": "health",
+          "value": 2
+        }
+      }
+    ]
+  }
+}
